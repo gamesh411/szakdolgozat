@@ -14,8 +14,154 @@
 \frenchspacing
 \sloppy
 
+\usepackage{etoolbox,refcount}
+\usepackage{multicol}
+
+\newcounter{countitems}
+\newcounter{nextitemizecount}
+\newcommand{\setupcountitems}{%
+  \stepcounter{nextitemizecount}%
+  \setcounter{countitems}{0}%
+  \preto\item{\stepcounter{countitems}}%
+}
+\makeatletter
+\newcommand{\computecountitems}{%
+  \edef\@currentlabel{\number\c@countitems}%
+  \label{countitems@\number\numexpr\value{nextitemizecount}-1\relax}%
+}
+\newcommand{\nextitemizecount}{%
+  \getrefnumber{countitems@\number\c@nextitemizecount}%
+}
+\newcommand{\previtemizecount}{%
+  \getrefnumber{countitems@\number\numexpr\value{nextitemizecount}-1\relax}%
+}
+\makeatother    
+\newenvironment{AutoMultiColItemize}{%
+\ifnumcomp{\nextitemizecount}{>}{3}{\begin{multicols}{2}}{}%
+\setupcountitems\begin{itemize}}%
+{\end{itemize}%
+\unskip\computecountitems\ifnumcomp{\previtemizecount}{>}{3}{\end{multicols}}{}}
+
+
 \title{Statikus elemzések tervezése Clang eszközzel}
 \author{Fülöp Endre}
 \begin{document}
 
+\begin{titlepage}
+\maketitle
+\end{titlepage}
+
+\tableofcontents
+
+\chapter{Bevezetés}
+\section{Motiváció}
+A szoftverfejlesztés során egy, a specifikációban körvonalazott problémára keressük a megoldást valamilyen információs rendszer megfelelő megtervezésével és megvalósításával. A problémához illeszkedő elvi megoldás megtalálása csak egy korai lépés a teljes folyamatot tekintve. Az ezt követő megvalósítás során pedig jellemzően a kiválasztott programozási nyelven implementálásra kerülnek a megoldás algoritmusai. Ez a lépés már magában nagy többletkomplexitást tud adni sok projekthez. Ennek okai lehetnek: szükségszerű modularizálás az újrafelhasználhatőság növelése érdekében, a megfelelő külső könyvtárak elérhetővé tétele és verziókezelése, és egyéb elő- és utófeldolgozást végző rendszerek (többek között a fordítást, csomagolás, és kihelyezést).
+Ilyen körülmények között érdemes lehet automatizált eszközöket bevetni annak biztosítására, hogy a szoftver helyes működését ellenőrizni tudjuk.
+Mivel minden környezet más és más, illetve minden programozási nyelv más területe elterjedt, ezért a követelmények, és a kialakult módszerek is jelentősen eltérhetnek a különböző nyelvek esetében.
+Szakdolgozatomban speciálisan a C++ szoftverekben, fordításidőben történő hibakereséssel fogalkozom.
+\section{Futásidejű hibakeresés}
+Kézenfekvő lehet a program működését menet közben megfigyelni. Ilyen esetben valamilyen eszköz segítségével az elkészült program futási tulajdonságait vizsgáljuk. Ezen eszközök is széles skálán mozoghatnak interaktivitás, hatókör és az éppen vizsgált program formáját tekintve.
+\subsection{Debugger}
+Az egyik legelterjedtebb hibakeresési módszer. A fejlesztőnek lehetőség van a futtató környezet állapotának folyamatos nyomonkövetésére, miközben a program működését előre meghatározott helyeken (jellemzően kódsorszámozás alapján) megállíthatja. Ezen helyek között léptethet is, és képes lehet a futtató környezet megváltoztatására, mely során például változók értékének felülírásával új végrehajtási utatkat kényszeríthet ki. Kifejezetten interaktív módszer, a kézi hibakeresést elősegítése a fő célja. Menet közben a fejlesztőnek értelmeznie kell, hogy mi történik, és miért. Emiatt nehezen automatizálható, de nem is ez az elsődleges célja.
+\subsection{Tesztek}
+A hibakeresés során használt manuális módszerekkel szemben, tesztekkel vezérelt hibakeresés már jóval könyebben automatizálható. A fejlesztő a program helyességének ellenőrzésére megvalósít egy futtatható szoftvert. Ezt sok esetben az aktuálisan tesztelt program saját nyelvén, valamilyen, a programozási nyelvhez kidolgozott keretrendszer segítségével teszi. 
+\section{Fordításidejű, kódszintű}
+Sok programozási nyelv esetében a forráskódot nem közvetlenűl értelmezi a futtató környezet, hanem egy transzformációs lépésen át kell haladnia. A fordítás során jellemzően emberi feldolgozásra alkalmas formából valamilyen gépi szinten könyebben értelmezhető alakba jutunk. Hogy ilyen előfeldolgozást használ sok nyelv, annak többek között a program teljesítményéhez van köze. A C++ esetében például kifejezetten sok eszköz áll rendelkezésre, hogy azokat az információkat, amelyek a kód írása során rendelkezésre állnak, hatékonyan fel lehessen használni. A template metaprogramming technika például a C++ esetében egy teljesértékű programozási nyelvet alkot, melynek segítségével sok problémát már futásidőben meg lehet oldani, illetve csökkenteni lehet a program futásidejét a fordításra szánt idő rovására.
+Jellemzően a fordítást megelőzően egy ellenőrző lépés keretében történik a vizsgálat, vannak azonban csak értelmezett (interpretált) nyelvek is. Ezek esetében is meg lehet vizsgálani a forráskódot, és az alapján is lehet érvelni a majd futó program tulajdonságait illetően.
+\subsection{Szintaktikai elemzés}
+Fordított programnyelvek esetében egyértelmű követelmény, hogy a forráskód minden részének helyesnek kell lennie a nyelv szabályai szerint, külöben már a fordító hibaüzenettel jelez. Jó lehetőséget ad azonban ez a módszer nem fordított nyelveknél is, ahol ha ezeket az elemzéseket előre el tudjuk végezni az egész kódbázison akkor sok hibát kiszűrhetünk.
+\subsection{Egyszerű szemantikai elemzés}
+Egyserű szemantikai elemzés esetében a forráskód alapján döntéseket hozunk a program jelentésének, várható viselkedésének helyességéről. Tipikusan egyszerűbb, nyilvánvalóan helytelen, illetve értelmetlen utasítok szűrhetőek ki ilyen módon. Jellemző példa lehet egy változó önértékadása, amely legtöbb esetben egy üres-művelet és a fejlesztő figyelmetlenségéből ered.
+Példa C++ esetében, tegyük fel, hogy egy közönséges függvény törzsében vagyunk:
+\begin{lstlisting}
+int a = 0;
+a = a;
+\end{lstlisting}
+\subsection{Összetett szemantikai elemzés}
+Látható, hogy ha a fenti példában nem szerepelne a változó nullára inicializálása sem, akkor még egy problémával találkoznánk: inicializálatlan változó értékének használata. Ennek a prblémának a felderítése azonban általános esetben sokkal nehezebb mint egy közönséges önértékadás felfedezése. Szükség van arra hogy a programozási nyelv szabályait követve meghatározzuk azt a környezetet, ahol a használatot megelőzően potenciálisan értéket kaphatott a változó, majd fel kell deríteni, hogy ez tényleg megtörtént-e.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c c c||} 
+ \hline
+ módszer & automatizálható & reprezentáció \\
+ \hline\hline
+ debug & nem & gépi kód \\ 
+ unit tesztek & igen, könnyen & gépi kód \\
+ integrációs tesztek & igen, nehezebben & gépi kód \\
+ szintaktikai elemzés & igen & forráskód \\ 
+ egyszerű szemantikai elemzés & igen & forráskód \\
+ összetett szemantikai elemzés & igen, nehezebben & forráskód \\
+ \hline
+\end{tabular}
+\caption{Hibakeresési módszerek}
+\label{table:errorfindmethods}
+\end{table}
+
+\chapter{Clang}
+A Clang egy a C nyelvi családhoz (C, C++, Objective C/C++) készült fordítóprogram. A Clang az LLVM projekt része, vagyis a teljes fordítási folyamat csak egy részét végzi. Az LLVM projekt moduláris felépítéssel rendelkezik, sokféle architektúrát és programozási nyelvet képes összekötni.
+
+\section{LLVM}
+A C++ nyelven megvalósított LLVM projekt 2000-ben indult. Célja, hogy általános, programnyelvtől független értelmezési, fordítási, és optimalizalizációs feladatokat lásson el. Eredetileg C, és C++ nyelveket támogatott, 2017-re már több mint 20 nyelvhez léteznek benne megfelelő modulok.
+Néhány programozási nyelv, melyre az LLVM rendelkezik támogatással:
+\begin{AutoMultiColItemize}  
+\item C\#
+\item Common Lisp
+\item Delphi
+\item Fortran
+\item OpenGL
+\item Haskell
+\item Java
+\item Julia
+\item Python
+\item R
+\item Ruby
+\item Rust
+\item Scala
+\item Swift
+\end{AutoMultiColItemize}
+
+\subsection{IR}
+Az LLVM projekt, hogy a különböző programozási nyelveket le tudja fordítani a különböző architektúrákra, bevezetett egy köztes reprezentációt. A köztes reprezentáció maga is egy programozási nyelv, hasonlít az assembly-re, erősen típusos. Ennek köszönhetően ha egy új programozási nyelvet szeretnénk lefordítani az eddigi architektúrákra, elég csak egy úgynevezett front-end-et létrehozni hozzá, mely arról gondoskodik, hogy az új programozási nyelvet a köztes reprezentációra alakítja át. Hasonló a helyzet, ha egy új hardvertípust kell támogatni, itt a köztes reprezentációból a gépi kódra átalakító rész neve a back-end. A köztes reprezentáció nagy előnye, hogy feloldja azt a skálázási problémát, amit egy új végpont (legyen az egy új nyelv, vagy új architektúra) bevezetése okoz.
+
+\begin{lstlisting}[caption={Hello World LLVM IR},label=lstlisting:helloworldllvmir]
+@.str = private unnamed_addr constant [13 x i8] c"hello world\0A\00"
+declare i32 @puts(i8* nocapture) nounwind
+define i32 @main() {   ; i32()*
+  %cast210 = getelementptr [13 x i8], [13 x i8]* @.str, i64 0, i64 0
+  call i32 @puts(i8* %cast210)
+  ret i32 0
+}
+
+!0 = !{i32 42, null, !"string"}
+!foo = !{!0}
+\end{lstlisting}
+
+\subsection{SSA}
+Az LLVM projekt optimalizálási technikák széles körét beveti hogy hatékonyan tudja a lehető legoptimálisabb kódot generálni. Ezen optimalizációs technikák közül sok épít a köztes reprezentáció egy speciális tulajdonságára, a Static Single Assignment alakra. Az LLVM-ben van eljárás az SSA alakra hozásra, és ezt érdemes is megtenni, mert a következő optimalizációs lépések hatékonyabbak:
+
+\begin{AutoMultiColItemize}
+\item constant propagation
+\item dead code elimination
+\item global value numbering
+\item register allocation
+\end{AutoMultiColItemize}
+
+\section{Clang}
+A Clang egy front-end, amely a C nyelvi család fordítását végzi. Ennek eredménye az LLVM IR forma. A Clang fejlesztése közben emelett az is szempont volt, hogy megfelelő betekintést adjon a fordítás folyamatába, és jóminőségű diagnosztikai információval szolgáljon. Így a Clang fordító nem csak a végzetes hibákat jelző üzenetekkel kommunikál a fejlesztő felé, hanem figyelmeztető üzenetekkel is. Emellet a Clang forráselemző, és forrástranszformációs feladatot is ellát. Ezek a tevékenységek a fordítás során végzett szintaktikus elemzés eredményeit használják fel, így kézenfekvő hogy a Clang keretében kerültek megvalósításra.
+
+\subsection{Fordító}
+\subsection{Elemző}
+\subsubsection{Clang Tidy}
+\subsubsection{Clang Static Analyzer}
+
+\chapter{SA Checkerek}
+\section{OStream}
+\section{EnumCastOutOfRange}
+
+\chapter{Felhasználói dokumentáció}
+\chapter{Fejlesztői dokumentáció}
+
+\chapter{Tesztek}
+\chapter{Összefoglalás}
 \end{document}
