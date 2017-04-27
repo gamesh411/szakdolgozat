@@ -47,18 +47,45 @@
 \author{Fülöp Endre}
 \begin{document}
 
-\begin{titlepage}
-\maketitle
-\end{titlepage}
+\input titlepage
 
 \tableofcontents
 
 \chapter{Bevezetés}
 \section{Motiváció}
-A szoftverfejlesztés során egy, a specifikációban körvonalazott problémára keressük a megoldást valamilyen információs rendszer megfelelő megtervezésével és megvalósításával. A problémához illeszkedő elvi megoldás megtalálása csak egy korai lépés a teljes folyamatot tekintve. Az ezt követő megvalósítás során pedig jellemzően a kiválasztott programozási nyelven implementálásra kerülnek a megoldás algoritmusai. Ez a lépés már magában nagy többletkomplexitást tud adni sok projekthez. Ennek okai lehetnek: szükségszerű modularizálás az újrafelhasználhatőság növelése érdekében, a megfelelő külső könyvtárak elérhetővé tétele és verziókezelése, és egyéb elő- és utófeldolgozást végző rendszerek (többek között a fordítást, csomagolás, és kihelyezést).
+A szoftverkörnyezetek nagyon változatosak, és mindnek megvannak a megoldanó problémái, illetve az ezek megoldásához természetesen illeszkedő programozási nyelvek. Ebből fakadóan a fejlesztési és futási követelmények, illetve az ezeket támogató módszerek tekintetében is nagy eltérések tapasztalhatóak.
+
+A szoftverfejlesztés során egy, a specifikációban körvonalazott problémára keressük a megoldást valamilyen információs rendszer megfelelő megtervezésével és megvalósításával. A problémához illeszkedő elvi megoldás megtalálása csak egy korai lépés a teljes folyamatot tekintve. Az ezt követő megvalósítás során pedig jellemzően a kiválasztott programozási nyelven implementálásra kerülnek a megoldás algoritmusai. Ez a lépés már magában nagy többletkomplexitást adhat sok projekthez. Ennek okai többek között lehetnek:
+\begin{itemize}
+\item szükségszerű modularizálás az újrafelhasználhatőság növelése érdekében
+\item a megfelelő külső könyvtárak elérhetővé tétele és verziókezelése, \item egyéb elő- és utófeldolgozást végző rendszerek
+\begin{itemize}
+\item fordítás és forrástranszformáció
+\item csomagolás, függőségek feloldása
+\item kihelyezés, eljuttatás a futási környezetbe (deployment)
+\end{itemize}
+\end{itemize}
 Ilyen körülmények között érdemes lehet automatizált eszközöket bevetni annak biztosítására, hogy a szoftver helyes működését ellenőrizni tudjuk.
-Mivel minden környezet más és más, illetve minden programozási nyelv más területe elterjedt, ezért a követelmények, és a kialakult módszerek is jelentősen eltérhetnek a különböző nyelvek esetében.
-Szakdolgozatomban speciálisan a C++ szoftverekben, fordításidőben történő hibakereséssel fogalkozom.
+
+Szakdolgozatomban egy speciális, de potenciálisan jó eredményeket produkáló szeletét vizsgálom az említett eszköztárnak, a tesztelési fázis során futó, szoftverhelyességet vizsgáló hibakereső eszközöket. Ezen belül bemutatom a fordításidőben történő hibakeresés jelenleg egyik legfejlettebb eszközét, a statikus analízist, és egy példaprogramon belül demonstrálom a lehetőségeit, illetve Clang eszközzel való implementáció részleteit.
+
+A szakdolgozat a C nyelvcsalád alapján tagjalja a statikus analízist, a megvalósított ellenőrző program is C illetve C++ nyelveken végez ellenőrzést, illetve a Clang is egy C++-ban megvalósított projekt. Emellett azonban sok más, akár teljesen más paradigmákat képviselő programozás nyelv forráskódelemzése is aktívan vizsgált téma, és a bemutatott elvek közül sok érvényes ezekre is. Általánosan elmondható, hogy minél több a közös pont a kérdéses programnyelv és az erősen típusos, fordított, és hardverközeli C++ nyelv között, a szakdolgozat annál nagyobb része szolgálhat releváns információval.
+
+\section{Hibakeresés}
+A szoftverfejlesztés implementációs fázisát sok esetben egy tesztelési eljárás követi. Ennek célja, hogy megbizonyosodjunk arról, hogy a specifikációban leírt működést produkálja a szoftver, illetve esetleg más esztétikai és kényelmi feltételeket teljesít-e.
+A tesztelés a program élettartamának számos pontján hatékonynak bizonyulhat. A hibakeresés lehetséges:
+\begin{itemize}
+\item tervezési fázisban, egy még absztrak programleíró modellen
+\item megvalósítás közben, az implementációs programnyelven
+\item implementáció után, a fordítást követő reprezentáción, ez lehet: \begin{itemize}
+\item bytekód
+\item tárgykód
+\item köztes reprezentáció
+\end{itemize}
+\item futtatás előtt, futásidejű tesztekkel (unit tesztek, integrációs tesztek)
+\item rendeltetésszerű használat során a futási környezetben (ilyen lehet a chaos monkey)
+\end{itemize}
+
 \section{Futásidejű hibakeresés}
 Kézenfekvő lehet a program működését menet közben megfigyelni. Ilyen esetben valamilyen eszköz segítségével az elkészült program futási tulajdonságait vizsgáljuk. Ezen eszközök is széles skálán mozoghatnak interaktivitás, hatókör és az éppen vizsgált program formáját tekintve.
 \subsection{Debugger}
