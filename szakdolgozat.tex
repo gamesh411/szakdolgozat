@@ -80,7 +80,7 @@ A szakdolgozat a C nyelvcsaládbeli példák alapján mutatja be a statikus anal
 A szoftverfejlesztés implementációs fázisát sok esetben egy tesztelési eljárás követi. Ennek célja, hogy megbizonyosodjunk arról, hogy a specifikációban leírt működést produkálja a szoftver, illetve esetleg más esztétikai és kényelmi feltételeket teljesít-e.
 A tesztelés a program élettartamának számos pontján hatékonynak bizonyulhat. A hibakeresés lehetséges:
 \begin{itemize}
-\item tervezési fázisban, egy még absztrak programleíró modellen
+\item tervezési fázisban, egy még absztrakt programleíró modellen
 \item megvalósítás közben, az implementációs programnyelven
 \item implementáció után, a fordítást követő reprezentáción, ez lehet:
 \begin{itemize}
@@ -96,30 +96,30 @@ A tesztelés a program élettartamának számos pontján hatékonynak bizonyulha
 A szoftvertervezés korai szakaszában gyakran elvont ábrázolási módszereket vetnek be, mint például UML diagramok. Sokféle szerepet elláthatnak, például osztálydiagramok segítségével írják le a program strukturális szerkezetét, felhasználói-eset diagram segítségével a felhasználói interakciókat, szekvenciadiagrammok segítségével pedig a programfolyamatok egymáshoz képesti ok-okozati, időbeli viszonyát. Már egy ilyen korai fázisban is érdemes lehet vizsgálni a szoftvert, a szekvenciadiagramok validáció és verifikáció módszerét használó elemzése  \cite{umlverification} már fejlesztői környezeteken belül is elérhető, a fejlesztési folyamat szerves részévé válhat.
 
 \subsection{Forráselemzés}
-Sok programozási nyelv esetében a forráskódot nem közvetlenül értelmezi a futtató környezet, hanem egy transzformációs lépésen át kell haladnia. A fordítás során jellemzően emberi feldolgozásra alkalmas formából valamilyen gépi szinten könnyebben értelmezhető alakba jutunk. Hogy ilyen előfeldolgozást használ sok nyelv, annak többek között a program teljesítményéhez van köze. A C++ esetében például kifejezetten sok eszköz áll rendelkezésre, hogy azokat az információkat, amelyek a kód írása során rendelkezésre állnak, hatékonyan fel lehessen használni. A template metaprogramming technika például a C++ esetében egy teljes értékű programozási nyelvet alkot, melynek segítségével sok problémát már futásidőben meg lehet oldani, illetve csökkenteni lehet a program futásidejét a fordításra szánt idő rovására.
+Sok programozási nyelv esetében a forráskódot nem közvetlenül értelmezi a futtató környezet, hanem egy transzformációs lépésen át kell haladnia. A fordítás során jellemzően emberi feldolgozásra alkalmas formából valamilyen gépi szinten könnyebben értelmezhető alakba jutunk. Hogy ilyen előfeldolgozást használ sok nyelv, annak többek között a program teljesítményéhez van köze. A C++ esetében például kifejezetten sok eszköz áll rendelkezésre, hogy azokat az információkat, amelyek a kód írása során rendelkezésre állnak, hatékonyan fel lehessen használni. A template metaprogramming technika például a C++ esetében egy teljes értékű programozási nyelvet alkot, melynek segítségével sok problémát már fordításidőben meg lehet oldani, illetve csökkenteni lehet a program futásidejét a fordításra szánt idő rovására.
 Jellemzően a fordítást megelőzően egy ellenőrző lépés keretében történik a vizsgálat, vannak azonban csak értelmezett (interpretált) nyelvek is. Ezek esetében is meg lehet vizsgálni a forráskódot, és az alapján is lehet érvelni a majd futó program tulajdonságait illetően.
 
 Szakdolgozatomban a forráselemzés kitüntetett szerepet kap, a statikus analízis a forráselemzés jelenleg legnagyobb komplexitással bíró eleme, mind a detektálásra szánt idő, mind a felismerhető problémák körét tekintve. Azonban a forráselemzés más technikákat is magába foglal. Forráselemzéshez a program forráskódjának minden lehetséges szinten történő elemzése:
 \begin{itemize}
 \item lexikális, vagyis, hogy a program megengedett tokenek sorozatából áll
-\item szintaktikai, mely során megvizsgáljuk hogy a tokensorozat megengedett nyelvi elemeket ír le
+\item szintaktikai, mely során megvizsgáljuk, hogy a tokensorozat megengedett nyelvi elemeket ír le
 \item szemantikai, a program jelentésével foglalkozó elemzés, vagyis hogy a program által leírt működés valóban megoldja-e a kitűzött problémát
 \end{itemize}
 A forráselemzés jobb kifejezés, mint a fordításidejű analízis, mert interpretált nyelvek esetében is van értelme a forrást vizsgálni. A módszerek melyek a forráskódot mint olyan reprezentáció vizsgálják, amelyen automatizált elemzéseket és transzformációkat \cite{interpretedtransforms} lehet végrehajtani, egyre elterjedtebbek. A transzformációk célja lehet lehet többek között optimalizáció, vagy a futtatási környezethez való alkalmazkodás.
 
-Erre példa lehet a javascript programozási nyelv, mely egy alapvetően interpretált, böngészőszoftverekben elterjed nyelv. A nyelvi sztenderd fejlődése gyors a böngészők támogatásának elterjedéséhez képest, illetve régebbi böngészőverziók nem támogatnak bizonyos újabb nyelvi elemeket. Ennek köszönhetően az új sztenderd szerint helyes kódbázis nem kompatibilis a régi böngészőkkel. Ezt a problémát egy forrástranszformációs technikával \cite{transpilation} oldják meg, mely során az új nyelvi elemeket forráskód szintjén lecserélik egy olyan implementációra, mely viselkedését tekintve megegyezik az újjal, és kompatibilis a régi sztenderddel is.
+Erre példa lehet a javascript programozási nyelv, mely egy alapvetően interpretált, böngészőszoftverekben elterjedt nyelv. A nyelvi sztenderd fejlődése gyors a böngészők támogatásának elterjedéséhez képest, illetve régebbi böngészőverziók nem támogatnak bizonyos újabb nyelvi elemeket. Ennek köszönhetően az új sztenderd szerint helyes kódbázis nem kompatibilis a régi böngészőkkel. Ezt a problémát egy forrástranszformációs technikával \cite{transpilation} oldják meg, mely során az új nyelvi elemeket forráskód szintjén lecserélik egy olyan implementációra, mely viselkedését tekintve megegyezik az újjal, és kompatibilis a régi sztenderddel is.
 
 \subsubsection{Szintaktikai elemzés}
-Fordított programnyelvek esetében egyértelmű követelmény, hogy a forráskód minden részének helyesnek kell lennie a nyelv szabályai szerint, külöben már a fordító hibaüzenettel jelez. Jó lehetőséget ad azonban ez a módszer nem fordított nyelveknél is, ahol ha ezeket az elemzéseket előre el tudjuk végezni az egész kódbázison akkor sok hibát kiszűrhetünk.
+Fordított programnyelvek esetében egyértelmű követelmény, hogy a forráskód minden részének helyesnek kell lennie a nyelv szabályai szerint, különben már a fordító hibaüzenettel jelez. Jó lehetőséget ad azonban ez a módszer nem fordított nyelveknél is, ahol ha ezeket az elemzéseket előre el tudjuk végezni az egész kódbázison, akkor sok hibát kiszűrhetünk.
 \subsubsection{Egyszerű szemantikai elemzés}
-Egyserű szemantikai elemzés esetében a forráskód alapján döntéseket hozunk a program jelentésének, várható viselkedésének helyességéről. Tipikusan egyszerűbb, nyilvánvalóan helytelen, illetve értelmetlen utasítok szűrhetőek ki ilyen módon. Jellemző példa lehet egy változó önértékadása, amely legtöbb esetben egy üres-művelet és a fejlesztő figyelmetlenségéből ered.
+Egyszerű szemantikai elemzés esetében a forráskód alapján döntéseket hozunk a program jelentésének, várható viselkedésének helyességéről. Tipikusan egyszerűbb, nyilvánvalóan helytelen, illetve teljesen felesleges utasítok szűrhetőek ki ilyen módon. Jellemző példa lehet egy változó önértékadása, amely legtöbb esetben egy üres-művelet és a fejlesztő figyelmetlenségéből ered.
 Példa C++ esetében, tegyük fel, hogy egy közönséges függvény törzsében vagyunk:
 \begin{lstlisting}
 int a = 0;
 a = a;
 \end{lstlisting}
 \subsubsection{Összetett szemantikai elemzés}
-Látható, hogy ha a fenti példában nem szerepelne a változó nullára inicializálása sem, akkor még egy problémával találkoznánk: inicializálatlan változó értékének használata. Ennek a problémának a felderítése azonban általános esetben sokkal nehezebb mint egy közönséges önértékadás felfedezése. Szükség van arra hogy a programozási nyelv szabályait követve meghatározzuk azt a környezetet, ahol a használatot megelőzően potenciálisan értéket kaphatott a változó, majd fel kell deríteni, hogy ez tényleg megtörtént-e.
+Látható, hogy ha a fenti példában nem szerepelne a változó nullára inicializálása sem, akkor még egy problémával találkoznánk: inicializálatlan változó értékének használata. Ennek a problémának a felderítése azonban általános esetben sokkal nehezebb, mint egy közönséges önértékadás felfedezése. Szükség van arra hogy a programozási nyelv szabályait követve meghatározzuk azt a környezetet, ahol a használatot megelőzően potenciálisan értéket kaphatott a változó, majd fel kell deríteni, hogy ez tényleg megtörtént-e.
 \begin{lstlisting}[caption={Szemantikailag hibás függvény}\label{lst:noclosefunction},language=C]
 void simple_read(char *file, char *dst, size_t size) {
   int fd = open(filename, 0);
@@ -127,18 +127,18 @@ void simple_read(char *file, char *dst, size_t size) {
   // nincs close hivas
 }
 \end{lstlisting}
-A fenti példa a UNIX rendszerek alapvető I/O műveleteivel olvas ki egy fájlból valamennyi bájtnyi adatot egy céltárolóba. A fenti függvény szintaktikailag helyes, és még ha hiányzik is belőle az open és a read függvények visszatérési értékének ellenőrzése, a legtöbb esetben az elvárt módon viselkedik. Mindenesetre addig, ameddig a folyamat el nem a számára megnyitható fájlleírók számát. Az open függvény ugyanis egy rendszerhívás köré írt vékony csomagoló, amely erőforrást foglal le a rendszerben. Az elvárt használata ennek az API-nak, hogy amikor végeztünk az erőforrás használatával, egy close hívással értesítsük erről a rendszert is. A rendszer felszabadítja az erőforrást, és a folyamat leírók lefoglalására szánt kerete visszaáll.
+A fenti példa a UNIX rendszerek alapvető I/O műveleteivel olvas ki egy fájlból valamennyi bájtnyi adatot egy céltárolóba. A fenti függvény szintaktikailag helyes, és még ha hiányzik is belőle az \texttt{open} és a \texttt{read} függvények visszatérési értékének ellenőrzése, a legtöbb esetben az elvárt módon viselkedik. Mindenesetre addig, ameddig a folyamat el nem éri a számára megnyitható fájlleírók számát. Az \texttt{open} függvény ugyanis egy rendszerhívás köré írt vékony csomagoló, amely erőforrást foglal le a rendszerben. Az elvárt használata ennek az API-nak, hogy amikor végeztünk az erőforrás használatával, egy \texttt{close} hívással értesítsük erről a rendszert is. A rendszer felszabadítja az erőforrást, és a folyamat leírók lefoglalására szánt kerete visszaáll.
 Az ilyen jellegű hibák felismerésére több információval kell rendelkeznünk a nyelv szintaktikai szabályainál, és a detektálás során is szükséges, hogy egy kódot alaposabban megvizsgáljuk. A fenti példában a hiba felismeréséhez szükség van a következő információkra:
 \begin{itemize}
-\item volt egy open hívás
-\item az open hívás visszatérési értékével, mint paraméterrel nem volt hívás a close függvényre
+\item volt egy \texttt{open} hívás
+\item az \texttt{open} hívás visszatérési értékével, mint paraméterrel nem volt hívás a \texttt{close} függvényre
 \end{itemize}
-Az hogy egy változóban tároljuk el az open hívás értékét, technikai részlet. Mégis fontos mert nem lenne sok értelme egy megnyitott leírót rögtön bezárni, és a hibakeresés lehetőségétől is elesnénk.
+Az hogy egy változóban tároljuk el az \texttt{open} hívás értékét, technikai részlet. Mégis fontos mert nem lenne sok értelme egy megnyitott leírót rögtön bezárni, és a hibakeresés lehetőségétől is elesnénk.
 Valójában azt is mondhatjuk, hogy minden szemantikailag helyes használata ennek az API-nak feltételezi hogy a fileleíró értékét a memóriában őrizzük ameddig ténylegesen használjuk az erőforrást. Mindezt azért, mert így később fel tudjuk szabadítani. Ilyen esetben a kiegészített követelményrendszer:
 \begin{itemize}
-\item volt egy open hívás
-\item az open hívás visszatérési értékét egy változó formájában eltároljuk a memóriában, jelenleg ez az \emph{fd}
-\item az \emph{fd} változó élettartamszabályai által meghatározott kódrészben sehol sem történt az \emph{fd} változóval paraméterezett close hívás
+\item volt egy \texttt{open} hívás
+\item az \texttt{open} hívás visszatérési értékét egy változó formájában eltároljuk a memóriában, jelenleg ez az \emph{fd}
+\item az \emph{fd} változó élettartamszabályai által meghatározott kódrészben sehol sem történt az \emph{fd} változóval paraméterezett \texttt{close} hívás
 \end{itemize}
 Ha ilyen formában fogalmazzuk meg a problémát, akkor elég ránézni a kódrészlethez tartozó szintaxisfára. Ezt és még sok, az analízist, és fejlesztést megkönnyítő funkciót a Clang eszköz a rendelkezésünkre bocsát. A következő parancs segítségével szöveges formába ki tudjuk kérni a szöveges szintaxisfa-reprezentációt.
 \begin{lstlisting}[caption={Az ast-dump használata}
@@ -202,7 +202,7 @@ Vannak elméleti korlátai is annak, hogy a futásidejű hibakereséssel milyen 
 Az egyik legelterjedtebb hibakeresési módszer. A fejlesztőnek lehetősége van a futtató környezet állapotának folyamatos nyomonkövetésére, miközben a program működését előre meghatározott helyeken (jellemzően kódsorszámozás alapján) megállíthatja. Ezen helyek között léptethet is, és képes lehet a futtató környezet megváltoztatására, mely során például változók értékének felülírásával új végrehajtási utakat kényszeríthet ki. Kifejezetten interaktív módszer, a fejlesztő tipikusan olyan esetekben használja, amikor fel akarja térképezni egy program futását, rá akar akadni egy hiba forrására. Menet közben a fejlesztőnek értelmeznie kell, hogy mi történik, és miért. Emiatt nehezen automatizálható.
 
 \subsubsection{Automatizált futásidejű hibakeresés, teszek}
-A futásidejű hibakeresés során használt manuális módszerekkel szemben, tesztekkel vezérelt hibakeresés már jóval könnyebben automatizálható. A fejlesztő a program helyességének ellenőrzésére megvalósít egy futtatható szoftvert. Ezt sok esetben az aktuálisan tesztelt program saját nyelvén, valamilyen, a programozási nyelvhez kidolgozott keretrendszer segítségével teszi. A tesztek növelik a kódminőséget, mert a már említett coverage értékét növelik, dokumentációként szolgálnak, és feltérképezhetőbbé teszik a szoftvert, emelett biztonsági hálóként szolgálnak a kódbázis módosításakor esetlegesen fellépő regressziós hibák ellen.
+A futásidejű hibakeresés során használt manuális módszerekkel szemben, tesztekkel vezérelt hibakeresés már jóval könnyebben automatizálható. A fejlesztő a program helyességének ellenőrzésére megvalósít egy futtatható szoftvert. Ezt sok esetben az aktuálisan tesztelt program saját nyelvén, valamilyen, a programozási nyelvhez kidolgozott keretrendszer segítségével teszi. A tesztek növelik a kódminőséget, mert a már említett coverage értékét növelik, dokumentációként szolgálnak, és feltérképezhetőbbé teszik a szoftvert, emellett biztonsági hálóként szolgálnak a kódbázis módosításakor esetlegesen fellépő regressziós hibák ellen.
 
 
 \begin{table}[h!]
@@ -211,7 +211,7 @@ A futásidejű hibakeresés során használt manuális módszerekkel szemben, te
  \hline
  módszer & automatizálható & reprezentáció \\
  \hline\hline
- debug & nem & gépi kód \\ 
+ debug & nem & gépi kód\footnotemark[1] \\ 
  unit tesztek & igen, könnyen & gépi kód \\
  integrációs tesztek & igen, nehezebben & gépi kód \\
  szintaktikai elemzés & igen & forráskód \\ 
@@ -222,6 +222,8 @@ A futásidejű hibakeresés során használt manuális módszerekkel szemben, te
 \caption{Hibakeresési módszerek összehasonlítása}
 \label{table:errorfindmethods}
 \end{table}
+
+\footnotetext[1]{Debug információkkal ellátott gépi kódról van szó, nem a releaseben használt optimalizált kódról}
 
 \chapter{Statikus elemzések Clanggel}
 A Clang elsődlegesen egy a C nyelvi családhoz (C, C++, Objective C/C++) készült fordítóprogram. A Clang az LLVM projekt része, vagyis a teljes fordítási folyamat csak egy részét végzi. Az LLVM projekt \cite{llvmhomepage} végzi a szintaktikailag ellenőrzött, szintaxisfa reprezentációba átírt kód IR, vagyis köztes reprezentációba hozását, az optimalizációs transzformációkat, és végül a kódgenerálást a megfelelő architektúrára. \cite{llvmhomepage}.
@@ -234,7 +236,7 @@ A Clang elsődlegesen egy a C nyelvi családhoz (C, C++, Objective C/C++) kész�
 
 
 \section{LLVM}
-Az LLVM projekt maga is moduláris felépítéssel rendelkezik, sokféle architektúrát és programozási nyelvet képes összekötni. Alkotója Chris Lattner \cite{lattnerhomepage} 2000-ben kezdte meg fejlesztését, azzal a céllal, hogy létrehozzon egy olyan eszköztárat, amely általános, programnyelvtől független értelmezési, fordítási, és optimalizációs feladatokat lát el. C++ nyelven íródott, eredetileg C, és C++ nyelveket támogatott, 2017-re már több mint 20 nyelvhez léteznek benne megfelelő modulok.
+Az LLVM projekt maga is moduláris felépítéssel rendelkezik, sokféle architektúrát és programozási nyelvet képes összekötni. Alkotója Chris Lattner \cite{lattnerhomepage} 2000-ben kezdte meg fejlesztését, azzal a céllal, hogy létrehozzon egy olyan eszköztárat, amely általános, programnyelvtől független értelmezési, fordítási és optimalizációs feladatokat lát el. C++ nyelven íródott, eredetileg C és C++ nyelveket támogatott, 2017-re már több mint 20 nyelvhez léteznek benne megfelelő modulok.
 Néhány programozási nyelv, melyre az LLVM rendelkezik támogatással:
 \begin{AutoMultiColItemize}  
 \item C\#
@@ -282,7 +284,7 @@ Az LLVM projekt optimalizálási technikák széles körét beveti hogy hatékon
 \end{AutoMultiColItemize}
 
 \section{Clang}
-A Clang egy frontend, amely a C nyelvi család fordítását végzi. Ennek eredménye az LLVM IR forma. A Clang fejlesztése közben emellett az is szempont volt, hogy megfelelő betekintést adjon a fordítás folyamatába, és jó minőségű diagnosztikai információval szolgáljon. Így a Clang fordító nem csak a végzetes hibákat jelző üzenetekkel kommunikál a fejlesztő felé, hanem figyelmeztető üzenetekkel is. Emellett a Clang forráselemző, és forrástranszformációs feladatot is ellát. Ezek a tevékenységek a fordítás során végzett szintaktikus elemzés eredményeit használják fel, így kézenfekvő hogy a Clang keretében kerültek megvalósításra.
+A Clang egy frontend, amely a C nyelvi család fordítását végzi. Ennek eredménye az LLVM IR forma. A Clang fejlesztése közben emellett az is szempont volt, hogy megfelelő betekintést adjon a fordítás folyamatába, és jó minőségű diagnosztikai információval szolgáljon. Így a Clang fordító nem csak a végzetes hibákat jelző üzenetekkel kommunikál a fejlesztő felé, hanem figyelmeztető üzenetekkel is. Emellett a Clang forráselemző és forrástranszformációs feladatot is ellát. Ezek a tevékenységek a fordítás során végzett szintaktikus elemzés eredményeit használják fel, így kézenfekvő hogy a Clang keretében kerültek megvalósításra.
 
 \subsection{Fordító}
 A Clang elsődleges célja, hogy a C nyelvi család általános fordítójaként használhassák. Ezt a feladatot a kiadásakor legszélesebb körben a GNU Compiler Collection látta el, és még ma is meghatározó a szerepe. A Clang-et a fejlesztők úgy alkották meg, hogy a lehető leginkább egy a GCC fordítóval kompatibilis, annak alternatív fordítójaként használható eszköz legyen. Emellett, hogy sok platformon el tudjon terjedni, szüksége van arra hogy a megfelelő nyelvi forrásfájlokat, illetve programkönyvtárakat fel tudja használni. A legtöbb UNIX alapú rendszer mellett a Clang már Windows rendszeren képes akár a natív Visual Studio által kialakított környezettel együttműködni \cite{clangusermanual}.
@@ -371,7 +373,7 @@ Ezt a szintet engedi vizsgálni a Clang könyvtár három fő interfészén kere
 \subsubsection{LibClang}
 A Clang fejlesztői fontosabbnak tartják a hatékonyságot szem előtt tartó folyamatos átalakításokat, illetve az új funciók minél hamarabbi bevezetését, mint a szigorúan betartott visszafele-kompatibilitást amikor a kódbázisról van szó. Ennek köszönhetően hatékony szoftvert kapunk amikor a Clang-et használjuk, de ez a fejlesztőktől aktívabb közreműködést vár el amikor egy Clang belső reprezentációval rendelkező szoftvert kell fenntartaniuk. Ez főleg a szintaxisfát érinti, amikor egy új Clang verzióban a szintaxisfa reprezentációja megváltozik, vagy esetleg új nyelvi elemeket emelne be, akkor egy régebbi Clang verzióval kompatibilis könyvtár elromolhat az új verzióban. Akik egy stabilabb fejlesztése felületre vágynak, azoknak megfelelő a LibClang interfész. A LibClang egy C nyelven írt könyvtár, amely bár nem biztosítja az AST-hez való közvetlen  hozzáférést, ezt áldozza fel a stabilitás kedvéért.
 
-A LibClang könyvtár emellett a megszorítás mellett is sok területen kedvelt és használt. Ennek a segítségével megvalosítható a Clang által kezelt nyelvek forráskód szintű vizsgálata. Lehetőséget a szintaxisfa bejárására a látogató (visitor) programozási minta segítségével, így relatíve magas absztrakciós szinten ad lehetőséget a forráskód statisztikai elemzésére, intelligens kontextusvizsgálatra, illetve nyelvi konstrukciók forráskódbeli helyükkel való pontos összekötésére \cite{libclangdocs}. Ezen funkciók kihasználása teszi lehetővé, hogy olyan eszközöket készítsünk a LibClang felhasználásával, mint automatikus forráskódformázó eszköszök, amelyek egy kódstílust leíró konfiguráció segítségével tetszőleges forrásállomány át tudnak formázni úgy hogy csak külalakra változik, struktúrája azonban ugyanaz marad. Emelett képesek lehetünk automatikus kódkiegészítők alkotására, melyek integrált fejlesztői környezetekben (IDE) kontextusfüggően képesek javaslatokat tenni a szerkesztés alatt levő forráskódokra. Emellett a LibClang könyvtár nagy előnye a másik két lehetőséggel szemben, hogy mivel C nyelvi interfész, ezt lehet a legkönnyebben más, akár dinamikusan típusos script-nyelvek programjaiba is integrálni. Python nyelvre van a hivatalosan nyilvántartott dokumentációban is hivatkozás, mint ahogy arra is, hogy az XCode IDE az OSX rendszeren használja ezt a lehetőséget \cite{clangtooling}.
+A LibClang könyvtár emellett a megszorítás mellett is sok területen kedvelt és használt. Ennek a segítségével megvalosítható a Clang által kezelt nyelvek forráskód szintű vizsgálata. Lehetőséget a szintaxisfa bejárására a látogató (visitor) programozási minta segítségével, így relatíve magas absztrakciós szinten ad lehetőséget a forráskód statisztikai elemzésére, intelligens kontextusvizsgálatra, illetve nyelvi konstrukciók forráskódbeli helyükkel való pontos összekötésére \cite{libclangdocs}. Ezen funkciók kihasználása teszi lehetővé, hogy olyan eszközöket készítsünk a LibClang felhasználásával, mint automatikus forráskódformázó eszköszök, amelyek egy kódstílust leíró konfiguráció segítségével tetszőleges forrásállomány át tudnak formázni úgy hogy csak külalakra változik, struktúrája azonban ugyanaz marad. Emellett képesek lehetünk automatikus kódkiegészítők alkotására, melyek integrált fejlesztői környezetekben (IDE) kontextusfüggően képesek javaslatokat tenni a szerkesztés alatt levő forráskódokra. Emellett a LibClang könyvtár nagy előnye a másik két lehetőséggel szemben, hogy mivel C nyelvi interfész, ezt lehet a legkönnyebben más, akár dinamikusan típusos script-nyelvek programjaiba is integrálni. Python nyelvre van a hivatalosan nyilvántartott dokumentációban is hivatkozás, mint ahogy arra is, hogy az XCode IDE az OSX rendszeren használja ezt a lehetőséget \cite{clangtooling}.
 
 \subsubsection{LibTooling}
 A LibTooling interfész C++ nyelvet használ, emiatt sokkal természetesebb módon, nagyobb manipulációs lehetőséget biztosít az AST-t tekintve, mint a LibClang. Elsődleges különálló alkalmazások fejlesztésére tervezték. Megvan a LibClang könyvtár ismertetésekor felhozott hátránya, miszerint a Clang szintaxisfa-reprezentációinak változásakor könnyen visszafele-kompatibilitási problémák léphetnek fel. Emellett a közvetlen szintaxisfa közvetlen elérése lehetőséget ad arra, hogy bonyolultabb átalakításokat végezzünk forráskódokon. Nem csak kozmetikai változások lehetségesek, hanem akár ekvivalens, vagy valamilyen tulajdonságot megtartó strukturális átalakítások is (refaktorálás). A emellett természetesen rendelkezésünkre áll minden ami LibClang használata esetében is, így nagyon pontos a nyelvi elemek és forráskódbeli pozíciójuk közötti leképezés, tehát forrás-diagnosztika szoftverek alapjául is szolgálhat.
@@ -533,7 +535,7 @@ test4(){
 
 Látható hogy ez a checker a globális státuszinformációt tartalmazó, std névtérben lévő, sztenderd kimenetet szimbolizáló elfelejtett módosításait detektálja. Abban az esetben, ha egy függvényben történt módosítás az std::cout formázóállapotában, akkor hibát kell jeleznünk, abban az esetben viszont, hogy ha a formázás értékét visszaállítjuk mielőtt véget ér a függvény futása, akkor helyesen használták a stream-et.
 
-Külön érdekesség, hogy ha a C++ nyelvi rendszerét kihasználó destruktor hívásban történik a visszaállítás akkor sem akarunk hibát kapni, hiszem az élettartamszabályok értelmében a test4 függvény esetében az ss lokális változó élettartama véget ér függvény végén, és meghívásra kerül a destruktora, amely visszaállítja a formázók állapotát.
+Külön érdekesség, hogy ha a C++ nyelvi rendszerét kihasználó destruktor hívásban történik a visszaállítás akkor sem akarunk hibát kapni, hiszem az élettartamszabályok értelmében a \texttt{test4} függvény esetében az ss lokális változó élettartama véget ér függvény végén, és meghívásra kerül a destruktora, amely visszaállítja a formázók állapotát.
 
 
 \section{EnumCastOutOfRangeChecker}
@@ -587,19 +589,49 @@ Emellett vannak még esetek ahol nem szükséges hibát adnunk. Ezekben az esete
 
 \chapter{Felhasználói dokumentáció}
 A CheckRunner egy grafikus felülettel rendelkező, statikus analízis futtatására, és az eredmények megtekintésére alkalmas szoftver. A felhasznált eszközök technikai hátteréből kifolyóan UNIX alapú rendszereken képes futni. Célja hogy demonstrálja a statikus analízis Clang nyelvi eszközzel való megvalósításának eredményét, a statikus analízist támogató eszközök együttműködési képességeit és a C nyelvi család tagjaival foglalkozó szoftverfejlesztőket segítse egy egyszerű grafikus felülettel.
+A program használja
+
+
+...
+
+\begin{figure}[h]
+\caption{A felhasználói felület futás közben.}
+\centering
+\includegraphics[scale=0.36]{ui.png}
+\end{figure}
+
+\begin{figure}[h]
+\caption{Hibaüzenet nem valid build-könyvtárra.}
+\centering
+\includegraphics[scale=0.8]{build_dir_error.png}
+\end{figure}
+
+\begin{figure}[h]
+\caption{Analízis közben.}
+\centering
+\includegraphics[scale=0.8]{progress_bar.png}
+\end{figure}
+
+\begin{figure}[h]
+\caption{Eredmények a CodeChecker felületén.}
+\centering
+\includegraphics[scale=0.4]{ui_results_open.png}
+\end{figure}
 
 ...
 
 
-
-
 \chapter{Fejlesztői dokumentáció}
 
+...
 
 \chapter{Tesztek}
-Tesztek a boost, tinyxml tinyxml2 könyvtárakon.
+A keretrendszer tesztelésre került több open-source könyvtáron, és a program saját kódján is.
+
 \chapter{Összefoglalás}
-Eredmény, lehetőségek, továbbfejlesztés.
+Szakdolgozatomban ismertettem a modern szoftverfejlesztés eszköztárának fontosabb elemei. Összehasonlításra került a statikus és a dinamikus kódelemzési stratégia, külön hangsúlyt fektetve a statikus elemzés jellegzetességeire. Emellett több példán keresztül bemutatásra került az eszköztár, illetve a modellezési módszerek, amelyek ezt lehetővé teszik. Kiterjesztést nyert a Clang keretrendszer is, több hibát képes felismerni a két checkernek köszönhetően mint azelőtt. Bemutattam az LLVM és a Clang eszköz felhasználási lehetőségeit egy praktikus program keretében, mely statikus elemzéshez kapcsolódó eszközöket fogott össze egy grafikus felületbe.
+
+A statikus forráselemzés a modern szoftverfejlesztés szerves részévé vált, a kódminőség javítása érdekében érdemes automatizált futtatóeszközök által élni a lehetőségeivel. Sok hiba felfedezésre kerül amelyeket lehetetlen, vagy igen körülményes lenne a futásidejű elemzések segítségével megtalálni. A példaprogram szerkezetileg jól illusztrálja, amit már a Clang működése során, és a kapcsolódó scan-build-py, és CodeChecker programok működése során is láttunk, miszerint több lazán kapcsolódó komponens segítségével nagyon flexibilis szoftveres megoldásokhoz juthatunk.
 
 \begin{thebibliography}{1}
 
