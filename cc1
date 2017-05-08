@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+"/usr/local/bin/clang-5.0" "-cc1" "-resource-dir" "/usr/local/lib/clang/5.0.0" "-internal-isystem" "/usr/local/include" "-internal-isystem" "/usr/local/lib/clang/5.0.0/include" "-internal-externc-isystem" "/usr/include/x86_64-linux-gnu" "-internal-externc-isystem" "/include" "-internal-externc-isystem" "/usr/include" "$@"

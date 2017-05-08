@@ -1,0 +1,28 @@
+TranslationUnitDecl
+| ...
+| ... // declarations, and definitions from includes
+| ...
+`-FunctionDecl simple_read 'void (char *, char *, size_t)'
+  |-ParmVarDecl used file 'char *'
+  |-ParmVarDecl used dst 'char *'
+  |-ParmVarDecl used size 'size_t':'unsigned long'
+  `-CompoundStmt
+    |-DeclStmt
+    | `-VarDecl used fd 'int' cinit
+    |   `-CallExpr 'int'
+    |     |-ImplicitCastExpr 'int (*)(const char *, int, ...)' <FunctionToPointerDecay>
+    |     | `-DeclRefExpr 'int (const char *, int, ...)' Function 'open' 'int (const char *, int, ...)'
+    |     |-ImplicitCastExpr 'const char *' <BitCast>
+    |     | `-ImplicitCastExpr 'char *' <LValueToRValue>
+    |     |   `-DeclRefExpr 'char *' lvalue ParmVar 'file' 'char *'
+    |     `-IntegerLiteral 'int' 0
+    `-CallExpr 'ssize_t':'long'
+      |-ImplicitCastExpr 'ssize_t (*)(int, void *, size_t)' <FunctionToPointerDecay>
+      | `-DeclRefExpr 'ssize_t (int, void *, size_t)' Function 'read' 'ssize_t (int, void *, size_t)'
+      |-ImplicitCastExpr 'int' <LValueToRValue>
+      | `-DeclRefExpr 'int' lvalue Var 'fd' 'int'
+      |-ImplicitCastExpr 'void *' <BitCast>
+      | `-ImplicitCastExpr 'char *' <LValueToRValue>
+      |   `-DeclRefExpr 'char *' lvalue ParmVar 'dst' 'char *'
+      `-ImplicitCastExpr 'size_t':'unsigned long' <LValueToRValue>
+        `-DeclRefExpr 'size_t':'unsigned long' lvalue ParmVar 'size' 'size_t':'unsigned long'
