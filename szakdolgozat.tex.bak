@@ -286,7 +286,7 @@ Az \emph{LLVM} projekt optimalizálási technikák széles körét beveti, hogy 
 \item register allocation
 \end{AutoMultiColItemize}
 
-\section{Clang}
+\section{\emph{Clang}}
 A \emph{Clang} egy frontend, amely a C nyelvi család fordítását végzi. Ennek eredménye az LLVM IR forma. A \emph{Clang} fejlesztése közben emellett az is szempont volt, hogy megfelelő betekintést adjon a fordítás folyamatába, és jó minőségű diagnosztikai információval szolgáljon. Így a \emph{Clang} fordító nem csak a végzetes hibákat jelző üzenetekkel kommunikál a fejlesztő felé, hanem figyelmeztető üzenetekkel is. Emellett a \emph{Clang} forráselemző és forrástranszformációs feladatot is ellát. Ezek a tevékenységek a fordítás során végzett szintaktikus elemzés eredményeit használják fel, így kézenfekvő, hogy a \emph{Clang} keretében kerültek megvalósításra.
 
 \subsection{Fordító}
