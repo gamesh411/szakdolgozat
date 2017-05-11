@@ -685,6 +685,7 @@ A program File menüjében egy Open és egy Exit művelet található. Az Open m
 
 \chapter{Fejlesztői dokumentáció}
 
+\section{Grafikus felület}
 A program felhasználói felülete a Qt eredetileg C++-ban írt rendszerét használja, mégis a CheckRunner végleges verziója Python nyelven került megvalósításra. A PyQt5 csomag gondoskodik a grafikus keretrendszer dinamikusan betölthető könyvtárainak elérhetővé tévételéről. A modul írói elvégezték azokat a platformspecifikus illesztéseket, amelyek lehetővé teszik, hogy egy univerzális Python 3-as alkalmazás is ki tudja használni a Qt keretrendszer közel minden funkcióját.
 
 A CheckRunner szoftveren való fejlesztésbe be lehet tehát kapcsolódni anélkül, hogy a felhasználói követelményeknél többet kellene teljesítenünk. A program alapvetően egy főablakból áll, amely modulárisan felhasznál három másik komponenst, hogy a CodeChecker háttérfolyamatokkal kommunikáljon. A program által megoldott problémák közül a háttérfolyamatokkal való kommunkáció volt a legérdekesebb. Előfordulnak egyszeri, gyorsan lefutó parancsok, hosszantartó folyamatok, melyekkel kommunikálni kell, és egy olyan folyamat is amely maga is szülőprocessz-ként viselkedik, és amelynek megállítása nem vonja maga után a gyerekeinek a megállását sem. Ezen esetek a fejlesztés során szerzett tapasztalataim szerint mind előfordulnak.
@@ -730,6 +731,58 @@ Mindhárom alkomponens szignálokkal kommunikál a főablakkal, hogy az aszinkro
 A kiválasztott és nem kiválasztott checkereket külön külön listában tartjuk számon, mert alapvetően a CheckExecutor osztály executeCheck metódusának parancssori paraméterekel kell felsorolnia, hogy mely checker-eket kívánja futtatni és melyeket kihagyni. A checker-ek leképezése a felhasználó felület kiválasztott elemeivé, illetve a fordított irányú konverzió a MainWindow osztályban zajlik le.
 
 A CodeChecker hagyományos használatával ellentétben a CheckRunner nem egy parancs keretében tisztítja meg a build-könyvtára és építi újból a vizsgált projektet, hanem két egymást követő folyamat keretében. Ennek a QProcess osztály parancsértelmező képessége szab határt, nem tud beágyazott parancsokat kezelni. Emiatt a folyamatkezelés kissé bonyolultabb lesz az executeCheck metódusban.
+
+\section{Checkerek}
+Az általam megavalósított két checker a Clang SA részeként értelmezett modulok formájában létezik, ha ki szeretnénk próbálni, vagy mintájukra újabb checker-eket készíteni, akkor megtalálhatóak a mellékelt adathordozón. Mindekét checker esetében a forrásfájlt, és a teszteseteket tartalmazó fájlt mellékeltem, a checkers mappában, ezek alapján elvégezhető a 3.1 -es fejezetben már ismertetett folyamat, és készíthető egy olyan lefordított Clang példány, amely már rendelkezésünkre adja őket.
+
+A statikus analízis folyamán a szimbolikus végrehajtást végző rendszer az AST alapján felépít egy CFG-t, majd ennek a gráfnak a segítségével modellezi az össze lehetséges futási útvonalat. Ezen lehetséges utak állomásai is egy gráfot képeznek, ezt a Clang SA Exploded Graph-nak hívja, és egy ProgramPoint és egy ProgramState típusú objektummal reprezentálja egy csúcsát. A ProgramPoint megmondja, hogy a CFG-n belül hol jár a program, a ProgramState pedig a program és az éppen futó ellenőrzés közös állapotát írja le. A ProgramState három fő komponenssel bír:
+
+környezeti információ, vagyis hogy az aktuális futási helyzetben milyen megfeleltetés érvényes a programkódbeli kifejezések és szimbolikus értékük között
+memória információ, vagyis hogy a futás ezen pontján milyen feltételezésekkel élhetünk a program memóriáját illetően
+általános adatok, az ellenőrzés során a checker-ek által összegyűjtött adatok jelenlegi értéke
+
+A checker-ek úgy működnek, hogy amikor a Clang SA szimbolikus végrehajtást végez, akkor minden programkódbeli kifejezés, illetve utasítás során annak típusától függően futtatja a megfelelő checker-t vagy checker-eket. Ez a megvalósítás a megfigyelő (observer) programozási minta egy jó példája, a checker megfigyelőként feliratkozik azokra az utasítástípusokra, amelyek számára érdekesek, és Clang SA elemzési folyamatai során a feliratkozott checkereket értesíti, hogy bekövetkezett a megfelelő utasítás feldolgozásának eseménye.
+
+Amikor egy checker megvalósítunk az első fontos döntés, hogy milyen eseményekre, vagyis milyen típusú kifejezések feldolgozására iratkozunk fel. Ennek a hátterében az áll, egy adott probléma esetében ki kell dolgoznunk a probléma megoldását, de a statikus analízis nyelvén, vagyis egy olyan algoritmust kell találnunk, amely tudja, hogy milyen milyen kifejezések érdekesek a számára, és ezekre hogyan reagáljon.
+
+A OStreamFormatChecker célkitűzése az volt, hogy adjon figyelmeztető üzenetet abban az esetben, ha valaki átállított egy formázási opciót a egy kimeneti stream objektumon, és utána elfelejtette visszaállítani azt, ha már nem használja. Ebben az esetben több probléma is felmerül. A kód írója bármikor átállíthatja ezeket a formátumjelzőket olyan céllal, mert neki nem tetszik az alapértelmezett beállítás és végig máshogy szeretné használni a kimenetet. Emellett előfordulhat, hogy valaki csak egy környezetben szeretné máshogy használni a stream objektumot. Az tehát, hogy mikor felejtett el valaki valamilyen beállítást visszaállítani (ha egyátalán vissza akarta valaha), nem triviális kérdés. Mégis vannak olyan eset amikor jobbnak látjuk, hogy hibát kapunk, mintsem akkor lepődjünk meg, vagy esetleg egy másik komponens, amely utánunk használja a kimenetet, hogy nem a szokványos formázással jelennek meg az adataink.
+
+Az OStreamFormatChecker esetében a következő formában fogalmaztam meg az eredeti problémát a programozási nyelvek konstrukciói alapján: Adjon a checker hibaüzenet ha egy függvényhívás végére érünk, és ennek a függvényhívásnak blokkjában (vagyis lexikális környezetében) volt olyan módosítás egy kimeneti streamben, ami nem lett visszaállítva az alaphelyzetbe. Kivételt képez az az eset, ha egy stream objektumtól lekérdezték a formátumait jelző állapotbiteket. Ilyenkor azt feltételezzük, hogy aki lekérte ezeket az majd vissza is fogja állítani az eredeti állapotot (más praktikus célja nem nagyon léteik a formátum-flagek lekérésének). Ez már az eredeti problémát elég jól közelítő modell.
+
+Az OStreamFormatChecker tehát megvalósítását tekintve feliratkozik az EndFunction eseményre, itt lehetséges felfedezni az állapot-visszaállítás hiányát, illetve feliratkozik még a PreCall és EvalCall eseményekre, mert ezek tudják megváltoztatni az stream állapotát. Egy stream állapota ráadásul több úton is változhat. Van, hogy az objektumon direkt módon meghívunk egy tagfüggvény, de lehetőségünk van manipulátorok használatára is.
+
+\begin{lstlisting}[caption={OStream objektumok formázásának megváltoztatása.}
+\label{lst:activatevirtualenv}]
+double var = 117.123456789123456;
+std::cout.setprecision(12);
+std::cout << var;
+// prints 117.123456789123
+std::cout << std::setprecision(3) << var;
+// prints 117.123
+\end{lstlisting}
+
+A megvalósítás során felhasználjuk a Clang SA által a checker-eknek biztosított tárolási lehetőséget egy asszociatív (map) jellegű tároló formájában. Minden stream-et a memóriában elfoglalt helye alapján azonosítunk, és ehhez, mint kulcshoz rendeljük a saját magunk által számon tartott formázási állapotok struktúráját, illetve hogy eredetileg melyik függvényben történt az első változtatás. Így a szimbolikus végrehajtás során minden alkalommal amikor egy egyező memóriaterületű stream objektumon módosítást tapasztalunk, akkor eljegyezzük. Az EndFunction eseményre ezután már könnyű reagálni, hiszen csak meg kell nézni, milyen streamek állapotai tartjuk számon, azok közül amelyiknél a bejegyzett első módosítás környezete éppen az a függvény amiből kilépünk. Ha az állapotok közül ilyenkor egy is eltér az alapértelmezettől, akkor hibaüzenetet adunk. Itt kezeljük még a kivételes esetet is, amikor volt .flags() hívás az objektumon. Ilyen esetben nem adunk hibát bármilyen is legyen a számon tartott stream.
+
+--------- osztálydiagram az ostreamchecker fontosabb részeiről ---------
+
+Az EnumCastOutOfRange checker egyszerűbb felépítésű. Itt a feladat az volt, hogy akkor adjunk hibát, hogy ha egy olyan típuskikényszerítés (cast) történik, melynek operandusa egy egész értéktípusba tartozó érték, és a paramétere, vagyis az a típus amibe kényszerítjük egy olyan enumeráció típus, amely típus definíciójából kiderül, hogy nem is képes reprezentálni az operandust.
+
+\begin{lstlisting}[caption={Enumeráció hibás cast-olása.}
+\label{lst:activatevirtualenv}]
+enum GraphNode {
+	WHITE = 0,
+	GRAY,
+	BLACK
+};
+
+GrapNode startNode = static_cast<GraphNode>(5);
+//startNode's value is undefined
+\end{lstlisting}
+
+Ilyen esetben ha nem képes az enumerációs típus tárolni az értéket, akkor cast eredménye nem definiált. Ahhoz, hogy egy enumerációs típus használni tudjunk szükség van a definíciójára a használat pontján, így azt a stratégiát választottam, hogy iratkozzon fel a checker a PreStmt, vagyis pre-statement, egy utasítás végrehajtása előtti eseményre. Abban az esetben, ha ez az utasítás egy cast-ot jelent (ez lehet C-stílusú, vagy lehet C++-os static\_cast), és ráadásul a céltípus enumerációs jellegű, akkor megvizsgálom hogy lehetséges ez a művelet.
+
+Ehhez egyik oldalról szükség van az enumeráció definíciójára, ez rendelkezésre is áll. A definíció egyszerűen megtalálható, és ha mint AST egy szelete hozzáfértünk, akkor meg is tudjuk belőle a lehetséges értékeket. Másik oldalról szükséges számunkra az érték amit cast-olunk. Ez sokszor nehezebb, és a checker kihasználja, hogy szimbolikus érékekkel történik a végrehajtás. A szimbolikus értékek valójában a valós futás során ténylegesen létező értékeket szimbolizálják megkötések (constraint-ek) formájában. Még ha nem is ismert az operandus konkrét értéke, a Clang SA által vezetett megszorításlisták segítségével ellenőrizhetjük, hogy létezik-e olyan eset, hogy az operandus valóban megfelelő értékkel bír. Akkor adunk hibát, ha nem létezik ilyen eset, hiszen egyik célunk, hogy ne produkáljunk hamis pozitív jelzéseket, ezért konzervatív módon járunk el.
+
 
 \begin{figure}[h]
 \caption{Felhasználói esetek.}
@@ -824,7 +877,7 @@ A program számos továbbfejlesztési lehetőséggel rendelkezik. A \emph{CodeCh
 
 A statikus forráselemzés a modern szoftverfejlesztés szerves részévé vált, a kódminőség javítása érdekében érdemes automatizált futtatóeszközök által élni a lehetőségeivel. Sok hiba felfedezésre kerül, amelyeket lehetetlen, vagy igen körülményes lenne a futásidejű elemzések segítségével megtalálni. A példaprogram szerkezetileg jól illusztrálja, amit már a \emph{Clang} működése során, és a kapcsolódó scan-build-py, és \emph{CodeChecker} programok működése során is láttunk, miszerint több lazán kapcsolódó komponens segítségével nagyon flexibilis szoftveres megoldásokhoz juthatunk.
 
-\begin{thebibliography}{1}
+\begin{thebibliography}{xx}
 
 \bibitem{umlverification} Makan Pourzandi {\em Formal Verification and Validation of UML
 2.0 Sequence Diagrams using Source and
