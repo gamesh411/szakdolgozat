@@ -55,6 +55,9 @@
 
 \tableofcontents
 
+\chapter*{Köszönetnyilvánítás}
+Köszönettel tartozom a témavezetőmnek, Pataki Norbernek, aki lelkiismeretes munkájával felügyelte a dolgozat tartalmi és formai alakulását. Köszönöm a lehetőséget az Ericsson csapatának, többek között Krupp Dánielnek, Horváth Gábornak és Gera Zoltánnak, a velük töltött munka inspiráló volt számomra. Nem utolsó sorban köszönöm a családomnak, hogy türelemmel viseltettek irányomban a tanulmányaim és a dolgozat írása alatt.
+
 \chapter{Bevezetés}
 \section{Motiváció}
 A szoftverkörnyezetek nagyon változatosak, és mindnek megvannak a megoldandó problémái, illetve az ezek megoldásához természetesen illeszkedő programozási nyelvek. Ebből fakadóan a fejlesztési és futási követelmények, illetve az ezeket támogató módszerek tekintetében is nagy eltérések tapasztalhatóak.
@@ -255,7 +258,7 @@ Néhány programozási nyelv, melyre az \emph{LLVM} rendelkezik támogatással:
 \item Swift
 \end{AutoMultiColItemize}
 
-\subsection{IR}
+\subsection*{IR}
 Az \emph{LLVM} projekt, hogy a különböző programozási nyelveket le tudja fordítani a különböző architektúrákra, bevezetett egy köztes reprezentációt. A köztes reprezentáció maga is egy programozási nyelv, hasonlít az assembly-re, erősen típusos. Ennek köszönhetően ha egy új programozási nyelvet szeretnénk lefordítani az eddigi architektúrákra, elég csak egy úgynevezett frontend-et létrehozni hozzá, mely arról gondoskodik, hogy az új programozási nyelvet a köztes reprezentációra alakítja át. Hasonló a helyzet, ha egy új hardvertípust kell támogatni, itt a köztes reprezentációból a gépi kódra átalakító rész neve a backend. A köztes reprezentáció nagy előnye, hogy feloldja azt a skálázási problémát, amit egy új végpont (legyen az egy új nyelv, vagy új architektúra) bevezetése okoz.
 
 \begin{minipage}{\linewidth}
@@ -273,7 +276,7 @@ define i32 @main() {   ; i32()*
 \end{lstlisting}
 \end{minipage}
 
-\subsection{SSA}
+\subsection*{SSA}
 Az \emph{LLVM} projekt optimalizálási technikák széles körét beveti hogy hatékonyan tudja a lehető legoptimálisabb kódot generálni. Ezen optimalizációs technikák közül sok épít a köztes reprezentáció egy speciális tulajdonságára, a Static Single Assignment alakra. Az \emph{LLVM}-ben van eljárás az SSA alakra hozásra, és ezt érdemes is megtenni, mert a következő optimalizációs lépések hatékonyabbak:
 
 \begin{AutoMultiColItemize}
@@ -549,7 +552,7 @@ Lehetőség van C-ben és C++-ban is hogy bármilyen megfelelő egész típusú 
 
 Mivel ez a probléma a típusrendszerhez köthető, felfedezése eleve nehézségekbe ütközik, ha futásidőben próbálnánk meg, hiszen olyan esetben már egy nem definiált értéket kellene vizsgálnunk. Ezen pedig szinte minden összehasonlító művelet szintén nem definiált eredményt ad. Tehát ennek a problémának a felderítése tipikusan a statikus analízis eszköztárát követeli meg.
 
-Egy enumerációs típus értékei elég különlegesek is lehetnek.
+Egy enumerációs típus értékei elég különlegesek is lehetnek, használatuk sokszor előfordul template metaprogramozás eesetén.
 
 \begin{lstlisting}[caption={Különleges enum értékek.}
 \label{lst:ostreamcheckerspec}]
@@ -567,6 +570,8 @@ struct Factorial<0>
 
 enum blabla { a = 4, b = 8, c, d = 3, e = Factorial<5>::val };
 \end{lstlisting}
+
+Ebben a példában a C++ nyelvi sajátosságait felhasználva fordításidőben kerül kiszámításra a faktoriális értéke. Külön érdekesség, hogy itt a rekurzió alapesetének definiálása egy template specializációval történik.
 
 
 \subsection{Specifikáció}
@@ -625,9 +630,9 @@ A CodeChecher projekt az Ericsson által fejlesztett nyílt forráskódú, dinam
 A felhasznált eszközök technikai hátteréből kifolyóan UNIX alapú rendszereken képes hatékonyan futni a mögöttes keretrendszer illetve a CheckRunnert közvetlenül kiszolgáló \emph{CodeChecker} szoftver is. Ebből kifolyólag a program futtatásához egy Linux Ubuntu 16.04 LTS 64 bites operációs rendszer szükséges AMD64 (más néven X86-64) architektúrás processzorral ellátott PC-vel.
 
 \section{Telepítés}
-A futtatáshoz szükséges a Qt keretrendszer 5.8-as verziója, amely tartalmazza a WebEngineWidgets könyvtárt is. A szakdolgozat írásakor elérhető Ubuntu 16.04-es csomagkezelő olyan Qt csomaggal rendelkezik, amelyik nem tartalmazza ezt, így le kell tölteni a Qt oldaláról \cite{qt5downloadpage} és a \texttt{/opt/Qt5.8} könyvtárba feltelepíteni.
+A futtatáshoz szükséges a Python programnyelvi környezet 3-as verziója, emellett a CodeChecker szoftver függőségei. A szakdolgozat írásakor elérhető Ubuntu 16.04-es verzójú Linux disztribúció beépített Python 3.5.2-es verzióján tesztelve is lett a szoftver.
 
-Egy ilyen összeállítás mellett a mellékleten található checkrunner mappát kell tetszőleges helyre átmásolni. A mappa tartalmazza a \emph{CodeChecker} 5.7.1-es verzióját a \texttt{codechecker} mappában, és a telepítőscriptet, melynek neve \texttt{make-codechecker.sh}. Használat előtt a \emph{CodeChecker} oldalán dokumentált függőségeket a csomagkezelőből telepíteni kell.
+Egy ilyen összeállítás mellett a mellékleten található checkrunner mappát kell tetszőleges helyre átmásolni. A mappa tartalmazza a \emph{CodeChecker} 5.7.1-es verzióját a \texttt{codechecker} mappában. Használat előtt a \emph{CodeChecker} oldalán dokumentált függőségeket a csomagkezelőből telepíteni kell.
 
 \begin{lstlisting}[caption={CodeChecker függőségei.}
 \label{lst:codecheckersytemdeps}]
@@ -637,7 +642,7 @@ sudo apt-get install clang-3.8 build-essential curl doxygen gcc-multilib \
   git python-virtualenv python-dev thrift-compiler
 \end{lstlisting}
 
-Ezután a könyvtárban található \texttt{make-codechecker.sh} script segítségével elő kell készíteni a \emph{CodeChecker}-t a futásra. A \emph{CodeChecker} alapértelmezetten a függőségek között feltelepített clang-3.8 -as verziót használja, de természetesen lehetőség van felhasználó által összeállított könyvtár használatára is. Ennek lépéseit már ismertettem a dolgozat első felében a 3.1-es fejezetben. Ha az aktuális felhasználó home könyvtárában végeztük az ott szereplő lépéseket, akkor a program már alapértelmezetten azt használja, elősegítve a fejlesztői környezet gyors összeállítását.
+Ezután a könyvtárban található \texttt{install.sh} script segítségével lehet telepíteni a CodeCheker-t, és magát az alkalmazást is. Internetkapcsolat szükséges, mert a Python csomagkezelő, illetve a CodeChecker egyedi függőségeinek feloldása is megköveteli. A \emph{CodeChecker} alapértelmezetten a függőségek között feltelepített clang-3.8 -as verziót használja, de természetesen lehetőség van felhasználó által összeállított könyvtár használatára is. Ennek lépéseit már ismertettem a dolgozat első felében a 3.1-es fejezetben. Ha az aktuális felhasználó home könyvtárában végeztük az ott szereplő lépéseket, akkor a program már alapértelmezetten azt használja, elősegítve a fejlesztői környezet gyors összeállítását.
 
 A programot a \texttt{checkrunner.sh} állomány segítségével indíthatjuk el. A grafikus felület indításakor a program kezelőfelületén láthatjuk az aktuálisan használt \emph{Clang} eszközben regisztrált checker-eket a bal felső részen. A felület lehetőséget biztosít arra, hogy csak bizonyos checker-eket futtassunk le. Ez kifelyezetten hasznos amikor tesztelni szeretnénk egy általunk fejlesztett modult. A modulok neve szerepel a felsorolásban, amelyek mellett pipálható dobozok segítségével érvényesíthetjük a választásunkat.
 
@@ -675,13 +680,64 @@ Itt lehetőségünk van még az egyes futások eredményeinek törlésére, ille
 \includegraphics[scale=0.4]{ui_results_open.png}
 \end{figure}
 
+A program File menüjében egy Open és egy Exit művelet található. Az Open művelet ugyanazt a szerepet látja el mint a build-könyvtárat kiválasztó gomb, de lehetőség van Control-O billentyűparancssal az elérésére. Az Exit művelet értelszerűen a kilépésre szolgál, billentyűparancsa a Control-Q. Emellett az ablakkezelő rendszer szokások kicsinyítés és nagyítás, tálcára helyezés és befejezés műveleteit is használhatjuk.
+
 \chapter{Fejlesztői dokumentáció}
 
-A CheckRunner program
+A progam felhasználói felülete a Qt eredetileg C++-ban írt rendszerét használja, mégis a CheckRunner végleges verziója Python nyelven került megvalósításra. A PyQt5 csomag gondoskodik a grafikus keretrendszer dinamikusan betölthető könyvtárainak elérhetővé tévételéről. A modul írói elvégezték azokat a platformspecifikus illesztéseket, amelyek lehetővé teszik hogy egy univerzális Python 3-as alkalmazás is ki tudja használni a Qt keretrendszer közel minden funkcióját.
 
+A CheckRunner szoftveren való fejlesztésbe be lehet tehát kapcsolódni anélkül, hogy a felhasználói követelményeknél többet kellene teljesítenünk. A program alapvetően egy főablakból áll, amely modulárisan felhasznál három másik komponenst, hogy a CodeChecker háttérfolyamatokkal kommunikáljon. A program által megoldott problémák közül a háttérfolyamatokkal való kommunkáció volt a legérdekesebb. Előfordulnak egyszeri, gyorsan lefutó parancsok, hosszantartó folyamatok, melyekkel kommunikálni kell, és egy olyan folyamat is amely maga is szülőprocessz-ként viselkedik, és amelynek megállítása nem vonja maga után a gyerekeinek a megállását sem. Ezen esetek a fejlesztés során szerzett tapasztalataim szerint mind előfordulnak.
+
+\begin{figure}[h]
+\caption{Alkalmazás-architektúra.}
+\centering
+\includegraphics[scale=0.4]{architektura.png}
+\end{figure}
+
+A Qt rendszer egy eseményvezérelt működést támogató rendszer, ehhez a támogatáshoz szükség van bizonyos konvenciók betartására. Az eredei C++-os rendszerben makrók segítségével köti össze a metaobjektum-fordító (MOC) az eseményvezérlést megvalósító signal és slot függvényeket. Ahhoz, hogy ez a rendszer műkdöjön, a dinamikusan típusos Python esetében nincs ilyen előfeldolgozásra szükség, és megengedett jelzéskezelő függvények köre is jóval tágabb. Természetesen ennek futásideji következményei vannak, azonban a  program megalkotásakor fontosabb szempontnak tartottam, hogy széleskörben legyen használható, egyszerű legyen a kihelyezés (deployment) és a fejlesztői környezet felállítása. A fejlesztés eredetileg C++ rendszerben kezdődött, azonban ezen a szempontok miatt a végső megvalósítás mégis Python nyelven történt.
+
+Meg kell említeni még, hogy a CodeChecker rendszer is Python nyelven íródott, és elképzelkető lenne a szorosabb integráció is. Ezt 2 szempont miatt vetettem el. Egyrészt a PyQt5 a Python nyelv hármas verzióját használja, a CodeChecker viszont a ketteset. A CodeChecker kódbázisának felületes áttekintése után megállapítható, hogy hozzáértő fejlesztők dolgoznak rajta, az esetleges integrációs törekvések nem ütköznének nagy problémába, azonban a CheckRunner alkalmazás megvalósításához nem volt erre szükség. A másik szempont az volt, hogy bemutassam a jól elkülönített komponensek flexibilisen összeállított rendszerét. A CheckRunner maga kis változtattásokkal képes lenne más, a CodeCheckerhez hasonlóan jól felszerelt futtatási környezetekkel együttműködni. Az ilyen megvalósítások manapság egyre terjedőben vannak, és a virtualizáció, illetve a konténer-technológia is hasonló megoldásokkal él.
+
+A program forrásfáljait a mellékelt projektkönyvtáron belül a src mappában találhatjuk. A MainWindow felhasználja még a QtCreator segítségével megalkozott mainwindow.ui xml formátumú leírófájlt, illetve az ebből keletkezett Ui\_Main\_Window.py Python forrásfájlt. A PyQt5 pyuic5 parancssori alkalmazásával lehet a .ui fájlokat lefordítani. a használatához érdemes bekapcsolni a virtualenv környezetet, így bárhonnan elérhetjük a parancsot.
+
+\begin{lstlisting}[caption={Virtuális környezet aktiválása.}
+\label{lst:activatevirtualenv}]
+source venv/bin/activate
+\end{lstlisting}
+
+\begin{lstlisting}[caption={UI fájlok lefordítása.}
+\label{lst:pyuicusage}]
+pyuic5 -o userinterface.py userinterface.ui
+\end{lstlisting}
+
+\begin{figure}[h]
+\caption{Szerkezeti áttekintés.}
+\centering
+\includegraphics[scale=0.3]{UMLattekintes.png}
+\end{figure}
+
+A program MainWindow komponense felelős a felhasználói kezelőfelület aktuálisan tartásáért, illetve a felhasználó kéréseinek delegálásáért. A ServerManager komponens felel azért, hogy a program indításakor elinduljon a háttérben az analízis-eredmények fogadásáért és megjelenítéséért felelős CodeChecker folyamat, illetver erről visszajelzést adjon a MainWindow felé. A CheckerSource szolgáltatja az éppen aktuálisan használt Clang rendszerben elérhető ellenőrzéseket, és azt is hogy alapértelmezetten be vannak-e kapcsolva. A CheckExecutor azért felel, hogy összegyűjtse a kívánt futtatás minden szükséges paraméterét, majd elindítsa a folyamatot, melynek keretében lefut az ellenőrzés, és a folyamat futásáról visszajelzést adjon a MainWindow felé.
+
+Mindhárom alkomponens szignálokkal kommunikál a főablakkal, hogy az aszinkron működés miatt hatékonyan valósítsák meg az információ továbbítását. A ClangSAChecker egy adatosztály, mely egy Clang SA-beli checker-t szimbolizál. Eltárolja még hogy a rendszerben alapértelezetten be van-e kapcsolva ez a cheker, illetver rendelkezik még egy statikus művelettel, mely segítségével a  CodeChecker rendszernek a checkereket leíró szöveges reprezentációjából és képes példányokat előállítani, factory-ként működve ezáltal. A komponensek eseménykezelése legtöbb helyen igazából esemény továbbítás, a mélyebb szinten lévő folyamatok eseményeinek hatására váltanak ki saját event-eket, és ezekre válaszol a felhasználói felület, így a felhasználói felület osztályának szemszögéből a mögöttes folyamatok proxy-jaiként viselkednek. Ez a programtervezési minták körében egy igen elterjedt megoldás.
+
+\begin{figure}[h]
+\caption{Osztálydiagram.}
+\centering
+\includegraphics[scale=0.3]{osztalydiagram.png}
+\end{figure}
+
+A kiválasztott és nem kiválasztott checkereket külön külön listában tartjuk számon, mert alapvetően a CheckExecutor osztáy executeCheck metódusának parancssori paraméterekel fel kell hogy sorolja hogy mely checker-eket kíván futtatni, és melyeket nem. A checkerek leképezése a felhasználó felulet kiválasztott elemeivé, illetve a fordított irányú konverzió a MainWindow osztályban zajlik le.
+
+A CodeChecker hagyományos használatával ellentétben a CheckRunner nem egy parancs keretében tisztítja meg a build-könyvtára és építi újból a vizsgált projektet, hanem két egymást követő folyamat keretében. Ennek a QProcess osztály parancsértelmező képessége szab határt, nem tud beágyazott parancsokat kezelni. Emiatt a folyamatkezelés kissé bonyolultabb lesz az executeCheck metódusban.
+
+\begin{figure}[h]
+\caption{Felhasználói esetek.}
+\centering
+\includegraphics[scale=0.7]{felhasznaloi.png}
+\end{figure}
 
 \chapter{Tesztek}
-A keretrendszer tesztelésre került több open-source könyvtáron, és a program saját kódján is. Az Ericsson-nál végzett munkám során lehetőségem nyílt sok nyílt forráskódú projekten látni a Clang Static analyzer erdményeit, többek között az OpenSSL, ffmpeg, tmux és vim könyvtárakon, és ezek mind működnek a CheckRunner szoftveren keresztüli használat során is. A saját checker-eim futása során lefuttatott tesztek közül két példát mutatok be a Boost könyvtárban amikor az OStreamFormatChecker hibát jelzett.
+A keretrendszer tesztelésre került több open-source könyvtáron, és a program saját kódján is. Az Ericsson-nál végzett munkám során lehetőségem nyílt sok nagy méretű, nyílt forráskódú projekten látni a Clang Static analyzer erdményeit, többek között az OpenSSL, ffmpeg, tmux és vim könyvtárakon, és ezek mind működnek a CheckRunner szoftveren keresztüli használat során is. A saját checker-eim futása során lefuttatott tesztek közül két példát mutatok be a Boost könyvtárban amikor az OStreamFormatChecker hibát jelzett.
 
 \begin{lstlisting}[basicstyle=\tiny,caption={Boost print hiba.}
 \label{lst:codecheckersytemdeps}]
@@ -758,10 +814,12 @@ class progress_timer : public timer, private noncopyable
 
 Ennek a hibának az az érdekessége, hogy a kód írója külön figyelmet fordított a formázási flag-ek visszaállítására, de ha kivétel lép fel akkor mégsem garantált az alapértelmezett állapot visszaállítása.
 
+A tesztek futása során tapasztalatim szerint a statikus elemzések által megoldott probléma teoretikusan exponenciális komplexitása nem látszott érvényesülni. Ezért az elemzést végző Clang SA motorba beépített heurisztika lehet a felelős.
+
 \chapter{Összefoglalás}
 Szakdolgozatomban ismertettem a modern szoftverfejlesztés eszköztárának fontosabb elemei. Összehasonlításra került a statikus és a dinamikus kódelemzési stratégia, külön hangsúlyt fektetve a statikus elemzés jellegzetességeire. Emellett több példán keresztül bemutatásra került az eszköztár, illetve a modellezési módszerek, amelyek ezt lehetővé teszik. Kiterjesztést nyert a \emph{Clang} keretrendszer is, több hibát képes felismerni a két checkernek köszönhetően mint azelőtt. Bemutattam az \emph{LLVM} és a \emph{Clang} eszköz felhasználási lehetőségeit egy praktikus program keretében, mely statikus elemzéshez kapcsolódó eszközöket fogott össze egy grafikus felületbe.
 
-A program számos továbbfejlesztési lehetőséggel rendelkezik. A \emph{CodeChecker} rendszerrel való hatékonyabb integráció lehetséges anélkül, hogy feláldozzuk a moduláris felépítést. A \emph{CodeChecker} szoftvernek modern elvárásokkal összhangban zajló virtualizása jelenleg fejlesztés alatt áll, egy \emph{Docker} konténer segítségével lehetőség lesz akár felhőalapú futtatására is. A CheckRunner szoftver illeszthető lehet az ilyen jellegű használathoz is.
+A program számos továbbfejlesztési lehetőséggel rendelkezik. A \emph{CodeChecker} rendszerrel való hatékonyabb integráció lehetséges anélkül, hogy feláldozzuk a moduláris felépítést. A \emph{CodeChecker} szoftvernek modern elvárásokkal összhangban zajló virtualizálása jelenleg fejlesztés alatt áll, egy \emph{Docker} konténer segítségével lehetőség lesz akár felhőalapú futtatására is. A CheckRunner szoftver illeszthető lehet az ilyen jellegű használathoz.
 
 A statikus forráselemzés a modern szoftverfejlesztés szerves részévé vált, a kódminőség javítása érdekében érdemes automatizált futtatóeszközök által élni a lehetőségeivel. Sok hiba felfedezésre kerül amelyeket lehetetlen, vagy igen körülményes lenne a futásidejű elemzések segítségével megtalálni. A példaprogram szerkezetileg jól illusztrálja, amit már a \emph{Clang} működése során, és a kapcsolódó scan-build-py, és \emph{CodeChecker} programok működése során is láttunk, miszerint több lazán kapcsolódó komponens segítségével nagyon flexibilis szoftveres megoldásokhoz juthatunk.
 
