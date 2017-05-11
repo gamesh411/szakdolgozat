@@ -469,13 +469,13 @@ cmake ../llvm
 make
 \end{lstlisting}
 
-Az \emph{LLVM} és a \emph{Clang} nagy projektek, sokáig tarthat a fordítás, és a linkelés fázisában sok memóriára van szükség. Ezeken a problémákon segíthetünk ha például a legtöbb Linux rendszerben elérhető gold linkert használjuk, amely kisebb memóriaigénnyel bír, így akár több folyamatot is indíthatunk amikor a make parancsot kiadjuk (például make -j4).
+Az \emph{LLVM} és a \emph{Clang} nagy projektek, sokáig tarthat a fordítás, és a linkelés fázisában sok memóriára van szükség. Ezeken a problémákon segíthetünk ha például a legtöbb Linux rendszerben elérhető gold linkert használjuk, amely kisebb memóriaigénnyel bír, így akár több folyamatot is indíthatunk amikor a \texttt{make} parancsot kiadjuk (például \texttt{make -j4}).
 
-A fordítási folyamat felgyorsítása érdekében használhatjuk a ninja nevű build-rendszert, ehhez telepítenünk kell a ninja csomagot, és az általunk kiadott a cmake parancsban a -GNinja kapcsolót is meg kell adnunk.
+A fordítási folyamat felgyorsítása érdekében használhatjuk a ninja nevű build-rendszert, ehhez telepítenünk kell a ninja csomagot, és az általunk kiadott a cmake parancsban a \texttt{-GNinja} kapcsolót is meg kell adnunk.
 
-Az is csökkenti a fordítási időt, hogy ha nem minden architektúrára építjük meg a kódgeneráláshoz szükséges könyvtárakat, csak a futtató környezet natív célpontjára. Ez az elterjedt X86-os architektúra esetében például a -DLLVM\_TARGETS\_TO\_BUILD="X86" kapcsolóval lehetséges.
+Az is csökkenti a fordítási időt, hogy ha nem minden architektúrára építjük meg a kódgeneráláshoz szükséges könyvtárakat, csak a futtató környezet natív célpontjára. Ez az elterjedt X86-os architektúra esetében például a \texttt{-DLLVM\_TARGETS\_TO\_BUILD="X86"} kapcsolóval lehetséges.
 
-Ha sikeres a fordítás, akkor a keletkező \emph{Clang} futtatható állomány segítségével ellenőrizhetjük, hogy minden rendben van-e, vagyis, hogy látjuk-e a checker-ek között a sajátunkat. Más projektekhez hasonlóan a keletkezett futtatható állományokat használhatjuk közvetlenül a build-könyvtárból, vagy az install cél megépítésével behelyezhetjük őket a rendszerkönyvtárak közé.
+Ha sikeres a fordítás, akkor a keletkező \emph{Clang} futtatható állomány segítségével ellenőrizhetjük, hogy minden rendben van-e, vagyis, hogy látjuk-e a checker-ek között a sajátunkat. Más projektekhez hasonlóan a keletkezett futtatható állományokat használhatjuk közvetlenül a build-könyvtárból, vagy az \texttt{install} cél megépítésével behelyezhetjük őket a rendszerkönyvtárak közé.
 
 \begin{lstlisting}[caption={A Clang checkerek kilistázása}
 \label{lst:listclangcheckers}]
@@ -483,7 +483,7 @@ clang -cc1 -analyzer-checker-help
 \end{lstlisting}
 
 \section{OStreamFormatChecker}
-Az OStreamFormatChecker a C++ nyelvi könyvtárat ellenőrzi, és segítségével meg lehet találni olyan kódrészleteket, amelyek átállították egy std::ostream típusú, írható, vagyis kimeneti stream formázási állapotát, de utána nagy valószínűséggel elfelejtették ezt visszaállítani.
+Az OStreamFormatChecker a C++ nyelvi könyvtárat ellenőrzi, és segítségével meg lehet találni olyan kódrészleteket, amelyek átállították egy \texttt{std::ostream} típusú, írható, vagyis kimeneti stream formázási állapotát, de utána nagy valószínűséggel elfelejtették ezt visszaállítani.
 
 \subsection{Specifikáció}
 A problémát egy mintakóddal specifikáljuk, mely során a kódsorokban kommentek formájában jelezzük, hogy az elvárt működés szerint ott hibát kell-e adnia checker-nek vagy nem. Ehhez hasonló rendszert használ az \emph{LLVM} projekt beépített tesztelő keretrendszere is, tehát a checker-hez tartozó tesztelő kódomban is ilyen formátumban jeleztem, ha valahol elvárt jelenség az, hogy hibát jelezzen a checker.
@@ -535,7 +535,7 @@ void test5(int mv) {
 }//OK std::cout stream state is recovered here
 \end{lstlisting}
 
-Látható, hogy ez a checker a globális státuszinformációt tartalmazó, std névtérben lévő, sztenderd kimenetet szimbolizáló stream objektum elfelejtett módosításait detektálja. Abban az esetben, ha egy függvényben történt módosítás az std::cout formázóállapotában, akkor hibát kell jeleznünk, abban az esetben viszont, hogy ha a formázás értékét visszaállítjuk mielőtt véget ér a függvény futása, akkor helyesen használták a stream-et.
+Látható, hogy ez a checker a globális státuszinformációt tartalmazó, \texttt{std} névtérben lévő, sztenderd kimenetet szimbolizáló stream objektum elfelejtett módosításait detektálja. Abban az esetben, ha egy függvényben történt módosítás az \texttt{std::cout} formázóállapotában, akkor hibát kell jeleznünk, abban az esetben viszont, hogy ha a formázás értékét visszaállítjuk mielőtt véget ér a függvény futása, akkor helyesen használták a stream-et.
 
 Külön érdekesség, hogy ha a C++ nyelvi rendszerét kihasználó destruktor hívásban történik a visszaállítás, akkor sem akarunk hibát kapni, hiszen az élettartamszabályok értelmében a \texttt{test5} függvény esetében az \texttt{ss} lokális változó élettartama véget ér függvény végén, és meghívásra kerül a destruktora, amely visszaállítja a formázók állapotát.
 
@@ -671,9 +671,9 @@ A felület jobb oldalán található a program fő nézete, amely a háttérben 
 \includegraphics[scale=0.8]{progress_bar.png}
 \end{figure}
 
-Amikor az analízis véget ér, vagy a felhasználó meggondolja magát és a Cancel gombra kattint, akkor a dialógusablak eltűnik, és a jobb oldali megjelenítőfelület frissítésre kerül. Az újonnan lefutott analízis , a régiekkel együtt meg kell, hogy jelenjen a listában, mellettük statisztikai információk mutatják a futások idejét, a talált hibák számát, a folyamat futásának teljes idejét, illetve a felhasznált parancsot. Ennek a parancsnak segítségével parancssori környezetből is le lehet futtatni ugyanazt a vizsgálatot.
+Amikor az analízis véget ér, vagy a felhasználó meggondolja magát és a \texttt{Cancel} gombra kattint, akkor a dialógusablak eltűnik, és a jobb oldali megjelenítőfelület frissítésre kerül. Az újonnan lefutott analízis , a régiekkel együtt meg kell, hogy jelenjen a listában, mellettük statisztikai információk mutatják a futások idejét, a talált hibák számát, a folyamat futásának teljes idejét, illetve a felhasznált parancsot. Ennek a parancsnak segítségével parancssori környezetből is le lehet futtatni ugyanazt a vizsgálatot.
 
-Itt lehetőségünk van még az egyes futások eredményeinek törlésére, illetve ha az első oszlopban szereplő kijelölő pipák segítségével két futást kiválasztunk, akkor a bal alsó részen lévő Diff gomb segítségével megtekinthetjük a két futás során keletkezett hibaesemények összehasonlítását. A második oszlopban, a futás nevére kattintva megtekinthetjük a futás eredményét közelebbről is.
+Itt lehetőségünk van még az egyes futások eredményeinek törlésére, illetve ha az első oszlopban szereplő kijelölő pipák segítségével két futást kiválasztunk, akkor a bal alsó részen lévő \texttt{Diff} gomb segítségével megtekinthetjük a két futás során keletkezett hibaesemények összehasonlítását. A második oszlopban, a futás nevére kattintva megtekinthetjük a futás eredményét közelebbről is.
 
 \begin{figure}[h]
 \caption{Eredmények a CodeChecker felületén.}
@@ -681,7 +681,7 @@ Itt lehetőségünk van még az egyes futások eredményeinek törlésére, ille
 \includegraphics[scale=0.4]{ui_results_open.png}
 \end{figure}
 
-A program File menüjében egy Open és egy Exit művelet található. Az Open művelet ugyanazt a szerepet látja el mint a build-könyvtárat kiválasztó gomb, de lehetőség van Control-O billentyűparancssal az elérésére. Az Exit művelet értelemszerűen a kilépésre szolgál, billentyűparancsa a Control-Q. Emellett az ablakkezelő rendszer szokások kicsinyítés és nagyítás, tálcára helyezés és befejezés műveleteit is használhatjuk.
+A program \texttt{File} menüjében egy \texttt{Open} és egy \texttt{Exit} művelet található. Az \texttt{Open} művelet ugyanazt a szerepet látja el mint a build-könyvtárat kiválasztó gomb, de lehetőség van \texttt{Control-O} billentyűparancssal az elérésére. Az \texttt{Exit} művelet értelemszerűen a kilépésre szolgál, billentyűparancsa a \texttt{Control-Q}. Emellett az ablakkezelő rendszer szokások kicsinyítés és nagyítás, tálcára helyezés és befejezés műveleteit is használhatjuk.
 
 \chapter{Fejlesztői dokumentáció}
 
@@ -732,14 +732,22 @@ A kiválasztott és nem kiválasztott checkereket külön külön listában tart
 
 A CodeChecker hagyományos használatával ellentétben a CheckRunner nem egy parancs keretében tisztítja meg a build-könyvtára és építi újból a vizsgált projektet, hanem két egymást követő folyamat keretében. Ennek a QProcess osztály parancsértelmező képessége szab határt, nem tud beágyazott parancsokat kezelni. Emiatt a folyamatkezelés kissé bonyolultabb lesz az executeCheck metódusban.
 
+\begin{figure}[h]
+\caption{Felhasználói esetek.}
+\centering
+\includegraphics[scale=0.7]{felhasznaloi.png}
+\end{figure}
+
 \section{Checkerek}
-Az általam megavalósított két checker a Clang SA részeként értelmezett modulok formájában létezik, ha ki szeretnénk próbálni, vagy mintájukra újabb checker-eket készíteni, akkor megtalálhatóak a mellékelt adathordozón. Mindekét checker esetében a forrásfájlt, és a teszteseteket tartalmazó fájlt mellékeltem, a checkers mappában, ezek alapján elvégezhető a 3.1 -es fejezetben már ismertetett folyamat, és készíthető egy olyan lefordított Clang példány, amely már rendelkezésünkre adja őket.
+Az általam megvalósított két checker a Clang SA részeként értelmezett modulok formájában létezik, ha ki szeretnénk próbálni, vagy mintájukra újabb checker-eket készíteni, akkor megtalálhatóak a mellékelt adathordozón. Mindkét checker esetében a forrásfájlt, és a teszteseteket tartalmazó fájlt mellékeltem, a checkers mappában, ezek alapján elvégezhető a 3.1 -es fejezetben már ismertetett folyamat, és készíthető egy olyan lefordított Clang példány, amely már rendelkezésünkre adja őket.
 
 A statikus analízis folyamán a szimbolikus végrehajtást végző rendszer az AST alapján felépít egy CFG-t, majd ennek a gráfnak a segítségével modellezi az össze lehetséges futási útvonalat. Ezen lehetséges utak állomásai is egy gráfot képeznek, ezt a Clang SA Exploded Graph-nak hívja, és egy ProgramPoint és egy ProgramState típusú objektummal reprezentálja egy csúcsát. A ProgramPoint megmondja, hogy a CFG-n belül hol jár a program, a ProgramState pedig a program és az éppen futó ellenőrzés közös állapotát írja le. A ProgramState három fő komponenssel bír:
 
-környezeti információ, vagyis hogy az aktuális futási helyzetben milyen megfeleltetés érvényes a programkódbeli kifejezések és szimbolikus értékük között
-memória információ, vagyis hogy a futás ezen pontján milyen feltételezésekkel élhetünk a program memóriáját illetően
-általános adatok, az ellenőrzés során a checker-ek által összegyűjtött adatok jelenlegi értéke
+\begin{itemize}
+\item környezeti információ, vagyis hogy az aktuális futási helyzetben milyen megfeleltetés érvényes a programkódbeli kifejezések és szimbolikus értékük között
+\item memória információ, vagyis hogy a futás ezen pontján milyen feltételezésekkel élhetünk a program memóriáját illetően
+\item általános adatok, az ellenőrzés során a checker-ek által összegyűjtött adatok jelenlegi értéke
+\end{itemize}
 
 A checker-ek úgy működnek, hogy amikor a Clang SA szimbolikus végrehajtást végez, akkor minden programkódbeli kifejezés, illetve utasítás során annak típusától függően futtatja a megfelelő checker-t vagy checker-eket. Ez a megvalósítás a megfigyelő (observer) programozási minta egy jó példája, a checker megfigyelőként feliratkozik azokra az utasítástípusokra, amelyek számára érdekesek, és Clang SA elemzési folyamatai során a feliratkozott checkereket értesíti, hogy bekövetkezett a megfelelő utasítás feldolgozásának eseménye.
 
@@ -784,14 +792,13 @@ Ilyen esetben ha nem képes az enumerációs típus tárolni az értéket, akkor
 Ehhez egyik oldalról szükség van az enumeráció definíciójára, ez rendelkezésre is áll. A definíció egyszerűen megtalálható, és ha mint AST egy szelete hozzáfértünk, akkor meg is tudjuk belőle a lehetséges értékeket. Másik oldalról szükséges számunkra az érték amit cast-olunk. Ez sokszor nehezebb, és a checker kihasználja, hogy szimbolikus érékekkel történik a végrehajtás. A szimbolikus értékek valójában a valós futás során ténylegesen létező értékeket szimbolizálják megkötések (constraint-ek) formájában. Még ha nem is ismert az operandus konkrét értéke, a Clang SA által vezetett megszorításlisták segítségével ellenőrizhetjük, hogy létezik-e olyan eset, hogy az operandus valóban megfelelő értékkel bír. Akkor adunk hibát, ha nem létezik ilyen eset, hiszen egyik célunk, hogy ne produkáljunk hamis pozitív jelzéseket, ezért konzervatív módon járunk el.
 
 
-\begin{figure}[h]
-\caption{Felhasználói esetek.}
-\centering
-\includegraphics[scale=0.7]{felhasznaloi.png}
-\end{figure}
-
 \chapter{Tesztek}
-A keretrendszer tesztelésre került több open-source könyvtáron, és a program saját kódján is. Az Ericssonnál végzett munkám során lehetőségem nyílt sok nagy méretű, nyílt forráskódú projekten látni a Clang Static Analyzer eredményeit, többek között az OpenSSL, ffmpeg, tmux és vim könyvtárakon, és ezek mind működnek a CheckRunner szoftveren keresztüli használat során is. A saját checker-eim futása során lefuttatott tesztek közül két példát mutatok be a Boost könyvtárban amikor az OStreamFormatChecker hibát jelzett.
+
+Mindkét checker-em rendelkezik automatizált unit-tesztekkel. Az OStreamFormatChecker tesztelése során külön nehézséget jelentett, hogy az egyik legvalószínűbb tesztelési célpont a sztenderd kimenetet szimbolizáló std::cout, ez pedig megvalósítását tekintve úgy működik a legtöbb sztenderd nyelvi könyvtár (STL) megvalósításban, hogy az iostream header tartalmaz egy statikus tagot, amely tárolja a globális std::cout stream objektumot. Emiatt a viselkedése miatt az egész LLVM kódbázisból ki van tiltva az iostream header használata. Ahhoz hogy tesztelni tudjam a checkert létre kellett hozni az STL-es output rendszer a vázát, amely alapján ha implementáció nélkül is, de szintaktikailag helyesen lehet hivatkozni a tesztesetek közben az std::cout objektumra, és a rá értelmezett műveletekre. Ez a mock-megvalósítás maga legalább annyi időt vesz igénybe mint a tesztesetek megírása, viszont sokat segíthet másoknak is aki hasonló funkcionalitás tesztelésébe fognak.
+
+Az OstreamFormatChecker tíz automatizált tesztesete lefedi a tesztelni kívánt működés nagyrészét. Van benne egyszeri módosítás, több módosítás egymásutánja, az értékek visszaállítása, illetve ennek elmulasztása, és vannak benne olyan esetek amikor a szimbolikus végrehajtónak a megszorítások alapján kell kitalálnia, hogy tényleg történt-e módosítás vagy nem. Az EnumCastOutOfRange tizenhat tesztesettel rendelkezik C-stílusú és C++ cast-olásokra, illetve megadott háttértípussal rendelkező és hagyományos, C-beli globálisan értelmezett és C++11-es láthatósági körrel rendelkező enumerációkra egyaránt.
+
+A manuális futás során nagyobb kódbázisokon is futtatásra került az ellenőrző, és a futás minden esetben problémamentes volt. A keretrendszer tesztelésre került több open-source könyvtáron, és a program saját kódján is. Az Ericssonnál végzett munkám során lehetőségem nyílt sok nagy méretű, nyílt forráskódú projekten látni a Clang Static Analyzer eredményeit, többek között az OpenSSL, ffmpeg, tmux és vim könyvtárakon, és ezek mind működnek a CheckRunner szoftveren keresztüli használat során is. A saját checker-eim futása során lefuttatott tesztek közül két példát mutatok be a Boost könyvtárban amikor az OStreamFormatChecker hibát jelzett.
 
 \begin{lstlisting}[basicstyle=\tiny,caption={Boost print hiba.}
 \label{lst:boostprintmacroerror}]
@@ -867,8 +874,6 @@ class progress_timer : public timer, private noncopyable
 \end{minipage}
 
 Ennek a hibának az az érdekessége, hogy a kód írója külön figyelmet fordított a formázási flag-ek visszaállítására, de ha kivétel lép fel, akkor mégsem garantált az alapértelmezett állapot visszaállítása.
-
-A tesztek futása során tapasztalatim szerint a statikus elemzések által megoldott probléma teoretikusan exponenciális komplexitása nem látszott érvényesülni. Ezért az elemzést végző Clang SA motorba beépített heurisztika lehet a felelős.
 
 \chapter{Összefoglalás}
 Szakdolgozatomban ismertettem a modern szoftverfejlesztés eszköztárának fontosabb elemeit. Összehasonlításra került a statikus és a dinamikus kódelemzési stratégia, külön hangsúlyt fektetve a statikus elemzés jellegzetességeire. Emellett több példán keresztül bemutatásra került az eszköztár, illetve a modellezési módszerek, amelyek ezt lehetővé teszik. Kiterjesztést nyert a \emph{Clang} keretrendszer is, több hibát képes felismerni a két checkernek köszönhetően mint azelőtt. Bemutattam az \emph{LLVM} és a \emph{Clang} eszköz felhasználási lehetőségeit egy praktikus program keretében, mely statikus elemzéshez kapcsolódó eszközöket fogott össze egy grafikus felületbe.
