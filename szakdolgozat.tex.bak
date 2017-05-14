@@ -5,6 +5,7 @@
 \usepackage{textcomp}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{url}
 \usepackage{epstopdf}
 \usepackage[inner=3.5cm,outer=2.5cm,top=2.5cm, bottom=2.5cm]{geometry}
 \RequirePackage{geometry}
@@ -108,7 +109,7 @@ Szakdolgozatomban a forráselemzés kitüntetett szerepet kap, a statikus analí
 \item szintaktikai, mely során megvizsgáljuk, hogy a tokensorozat megengedett nyelvi elemeket ír le
 \item szemantikai, a program jelentésével foglalkozó elemzés, vagyis hogy a program által leírt működés valóban megoldja-e a kitűzött problémát
 \end{itemize}
-A forráselemzés jobb kifejezés, mint a fordításidejű analízis, mert interpretált nyelvek esetében is van értelme a forrást vizsgálni. A módszerek melyek a forráskódot mint olyan reprezentáció vizsgálják, amelyen automatizált elemzéseket és transzformációkat \cite{interpretedtransforms} lehet végrehajtani, egyre elterjedtebbek. A transzformációk célja lehet lehet többek között optimalizáció, vagy a futtatási környezethez való alkalmazkodás.
+A forráselemzés jobb kifejezés, mint a fordításidejű analízis, mert interpretált nyelvek esetében is van értelme a forrást vizsgálni. A módszerek, melyek a forráskódot mint olyan reprezentáció vizsgálják, amelyen automatizált elemzéseket és transzformációkat \cite{interpretedtransforms} lehet végrehajtani, egyre elterjedtebbek. A transzformációk célja lehet lehet többek között optimalizáció, vagy a futtatási környezethez való alkalmazkodás.
 
 Erre példa lehet a javascript programozási nyelv, mely egy alapvetően interpretált, böngészőszoftverekben elterjedt nyelv. A nyelvi sztenderd fejlődése gyors a böngészők támogatásának elterjedéséhez képest, illetve régebbi böngészőverziók nem támogatnak bizonyos újabb nyelvi elemeket. Ennek köszönhetően az új sztenderd szerint helyes kódbázis nem kompatibilis a régi böngészőkkel. Ezt a problémát egy forrástranszformációs technikával \cite{transpilation} oldják meg, mely során az új nyelvi elemeket forráskód szintjén lecserélik egy olyan implementációra, mely viselkedését tekintve megegyezik az újjal, és kompatibilis a régi sztenderddel is.
 
@@ -137,7 +138,7 @@ Az ilyen jellegű hibák felismerésére több információval kell rendelkeznü
 \item az \texttt{open} hívás visszatérési értékével, mint paraméterrel nem volt hívás a \texttt{close} függvényre
 \end{itemize}
 Az, hogy egy változóban tároljuk el az \texttt{open} hívás értékét, technikai részlet. Mégis fontos, mert nem lenne sok értelme egy megnyitott leírót rögtön bezárni, és a hibakeresés lehetőségétől is elesnénk.
-Valójában azt is mondhatjuk, hogy minden szemantikailag helyes használata ennek az API-nak feltételezi, hogy a fileleíró értékét a memóriában őrizzük ameddig ténylegesen használjuk az erőforrást. Mindezt azért, mert így később fel tudjuk szabadítani. Ilyen esetben a kiegészített követelményrendszer:
+Valójában azt is mondhatjuk, hogy minden szemantikailag helyes használata ennek az API-nak feltételezi, hogy a fájlleíró értékét a memóriában őrizzük, ameddig ténylegesen használjuk az erőforrást. Mindezt azért, mert így később fel tudjuk szabadítani. Az eddigi észrevételeinket az alábbi módon egészíthetjük ki:
 \begin{itemize}
 \item volt egy \texttt{open} hívás
 \item az \texttt{open} hívás visszatérési értékét egy változó formájában eltároljuk a memóriában, jelenleg ez az \emph{fd}
@@ -155,7 +156,7 @@ clang --analyze -Xanalyzer -ast-dump file_read.c
 \caption{Szintaxisfa szöveges megjelenítése.}
 \end{figure}
 
-Lehetőség van arra is, hogy a szintaxisfát grafikusan megjelenítsük, ezt a \emph{Clang} úgy támogatja, hogy egy \emph{dot} formátumú fájlt generál, amit platformspecifikusan meg lehet tekinteni valamilyen eszközzel, én az Ubuntu rendszeren elérhető xdot programot használtam.
+Lehetőség van arra is, hogy a szintaxisfát grafikusan megjelenítsük, ezt a \emph{Clang} úgy támogatja, hogy egy \emph{dot} formátumú fájlt generál, amit platformspecifikusan meg lehet tekinteni valamilyen eszközzel. Én az Ubuntu rendszeren elérhető xdot programot használtam.
 \begin{lstlisting}[caption={Az ast-view használata}
 \label{lst:astview}]
 clang --analyze -Xanalyzer -ast-view file_read.c
@@ -167,7 +168,7 @@ clang --analyze -Xanalyzer -ast-view file_read.c
 \includegraphics[scale=0.2]{astview.png}
 \end{figure}
 
-Látható, hogy a hiba feltárásához nem elég a szintaxisfa áttekintése, mégis az ilyen jellegű hibák felismeréséhez szükséges információ szerepel a benne. Szükség van a folyamat futásának modellezésére is, amelyet egy Control Flow Graph, vagy CFG segítségével tudunk szemléltetni \ref{lst:factorialiterative}. Ilyen esetben fordulhatunk szimbolikus végrehajtás technikájához. A szimbolikus végrehajtás során szimuláljuk a program futását, azonban nem konkrét értékekkel, hanem az ezeket reprezentáló szimbolikus értékekkel. Az analízis során pedig az ezekre megfogalmazott kényszerek, és feltételek alapján tudunk következtetéseket levonni a kód helyességét illetően. A mai eszközök jellemzően a megszorításokról való érvelést visszavezetik egy SAT kielégíthetőségi problémára, amely során az aktuális programállapotban a változók lehetséges értékkészletét próbáljuk meg leszűkíteni. Ilyen módon ha kielégíthetetlen állapothoz értünk akkor már a nyelv szabályai segítségével tudunk érvelni a futási utak bejárhatóságágról is.
+Látható, hogy a hiba feltárásához nem elég a szintaxisfa áttekintése, mégis az ilyen jellegű hibák felismeréséhez szükséges információ szerepel a benne. Szükség van a folyamat futásának modellezésére is, amelyet egy Control Flow Graph, vagy CFG segítségével tudunk szemléltetni (lásd ábra \ref{fig:facorialiterative}). Ilyen esetben fordulhatunk szimbolikus végrehajtás technikájához. A szimbolikus végrehajtás során szimuláljuk a program futását, azonban nem konkrét értékekkel, hanem az ezeket reprezentáló szimbolikus értékekkel. Az analízis során pedig az ezekre megfogalmazott kényszerek, és feltételek alapján tudunk következtetéseket levonni a kód helyességét illetően. A mai eszközök jellemzően a megszorításokról való érvelést visszavezetik egy SAT kielégíthetőségi problémára, amely során az aktuális programállapotban a változók lehetséges értékkészletét próbáljuk meg leszűkíteni. Ilyen módon ha kielégíthetetlen állapothoz értünk akkor már a nyelv szabályai segítségével tudunk érvelni a futási utak bejárhatóságágról is.
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[caption={A faktoriális iteratív algoritmusa}
@@ -190,6 +191,7 @@ unsigned factiter(unsigned n)
 \caption{Az iteratív faktoriális CFG-ja.}
 \centering
 \includegraphics[scale=0.2]{factiter_cfg.png}
+\label{fig:facorialiterative}
 \end{figure}
 
 \subsection{Futásidejű hibakeresés}
@@ -289,10 +291,10 @@ Az \emph{LLVM} projekt optimalizálási technikák széles körét beveti, hogy 
 \section{Clang}
 A \emph{Clang} egy frontend, amely a C nyelvi család fordítását végzi. Ennek eredménye az LLVM IR forma. A \emph{Clang} fejlesztése közben emellett az is szempont volt, hogy megfelelő betekintést adjon a fordítás folyamatába, és jó minőségű diagnosztikai információval szolgáljon. Így a \emph{Clang} fordító nem csak a végzetes hibákat jelző üzenetekkel kommunikál a fejlesztő felé, hanem figyelmeztető üzenetekkel is. Emellett a \emph{Clang} forráselemző és forrástranszformációs feladatot is ellát. Ezek a tevékenységek a fordítás során végzett szintaktikus elemzés eredményeit használják fel, így kézenfekvő, hogy a \emph{Clang} keretében kerültek megvalósításra.
 
-\subsection{Fordító}
+\subsection*{Fordító}
 A \emph{Clang} elsődleges célja, hogy a C nyelvi család általános fordítójaként használhassák. Ezt a feladatot a kiadásakor legszélesebb körben a GNU Compiler Collection látta el, és még ma is meghatározó a szerepe. A \emph{Clang}-et a fejlesztők úgy alkották meg, hogy a lehető leginkább egy a GCC fordítóval kompatibilis, annak alternatív fordítójaként használható eszköz legyen. Emellett, hogy sok platformon el tudjon terjedni, szüksége van arra, hogy a megfelelő nyelvi forrásfájlokat, illetve programkönyvtárakat fel tudja használni. A legtöbb UNIX alapú rendszer mellett a \emph{Clang} már Windows rendszeren képes akár a natív Visual Studio által kialakított környezettel együttműködni \cite{clangusermanual}.
 
-A GCC-vel való kompatibilitás és az funkciója, hogy képes más fordítási és rendszerkörnyezetekkel együttműködni jelentős többletkomplexitást ad az ,,egyszerű" fordítási feladatához. Emiatt a megvalósítása során több rétegű alkalmazásmodellt választottak a fejlesztők. A \emph{Clang} eszköz a végfelhasználó számára elsődlegesen egy, a platformnak megfelelően lefordított és csomagolt bináris állományként áll rendelkezésre. Ez az eszköz alapértelmezetten a \emph{Clang} driver részét használja, amely meghajtja a fordítási folyamatot. Ez felelős a parancssori opciók feldolgozásáért, a programkönyvtárak és a rendszerhez tartozó forrásfájlok megtalálásáért. Ez a rész az ami a beérkező parancs és argumentumok együtteséből egy konkrét művelet tervét elkészíti. Lásd \ref{fig:clangdriver}.
+A GCC-vel való kompatibilitás és az a funkciója, hogy képes más fordítási és rendszerkörnyezetekkel együttműködni jelentős többletkomplexitást ad az ,,egyszerű" fordítási feladatához. Emiatt a megvalósítása során több rétegű alkalmazásmodellt választottak a fejlesztők. A \emph{Clang} eszköz a végfelhasználó számára elsődlegesen egy, a platformnak megfelelően lefordított és csomagolt bináris állományként áll rendelkezésre. Ez az eszköz alapértelmezetten a \emph{Clang} driver részét használja, amely meghajtja a fordítási folyamatot. Ez felelős a parancssori opciók feldolgozásáért, a programkönyvtárak és a rendszerhez tartozó forrásfájlok megtalálásáért. Ez a rész az, ami a beérkező parancs és argumentumok együtteséből egy konkrét művelet tervét elkészíti. Lásd \ref{fig:clangdriver} ábra.
 
 A fordítás folyamata 5 fő lépésre tagolható:
 \begin{itemize}
@@ -347,13 +349,13 @@ Miután a fordító kiválasztott egy eszközt, az eszköz feladata, hogy Comman
 \subsubsection{Execute}
 A fordítás végrehajtása a driver számára a legegyszerűbb lépés, kevés opcióval, van azonban lehetőség a programkimenetek átirányítására, az egyes eszközök visszatérési értékeinek továbbadására, illetve a folyamatok teljesítménymérésére is.
 
-\subsection{Elemző}
-A \emph{Clang} eszköz alapértelmezetten megpróbál segítséget nyújtani a fordítás során akkor is ha külön nem kérjük rá. A fordításkor felmerülő hibaüzenetek mellett figyelmeztetőüzenet széles skáláját használja ahhoz, hogy az esetleges hibák, nem várt működések kiküszöbölésében segítse a programozót.
+\subsection*{Elemző}
+A \emph{Clang} eszköz alapértelmezetten megpróbál segítséget nyújtani a fordítás során akkor is, ha külön nem kérjük rá. A fordításkor felmerülő hibaüzenetek mellett figyelmeztetőüzenet széles skáláját használja ahhoz, hogy az esetleges hibák, nem várt működések kiküszöbölésében segítse a programozót.
 
-A fordítás közben kiadott hibaüzenetek és figyelmeztetések mellett lehetőség van más vizsgálatok lefuttatására is amelyek a tüzetesebb vizsgálatnak vetik alá a programot. Ezek általában valamilyen futás, vagy fordításidejű költséggel rendelkeznek, ezért a közönséges fordítás alatt nem futnak le alapértelmezetten.
+A fordítás közben kiadott hibaüzenetek és figyelmeztetések mellett lehetőség van más vizsgálatok lefuttatására is, amelyek a tüzetesebb vizsgálatnak vetik alá a programot. Ezek általában valamilyen futás, vagy fordításidejű költséggel rendelkeznek, ezért a közönséges fordítás alatt nem futnak le alapértelmezetten.
 A \emph{Clang} és \emph{LLVM} infrastruktúra több ilyen módszerrel is bír. A különböző Sanitizer névre hallgató megvalósítások, például AddressSanitizer, MemorySanitizer, UndefinedBehaviorSanitizer lényege, hogy a program lefordításakor a keletkező bináris állományban a program futása mellett a program működését vizsgáló logika is fut, és hiba érzékelése esetén fájlban vagy sztenderd kimeneten értesítést erről. Ezek futásidejű hibakeresési módszerek. Dolgozatomban a forráselemzés által felfedhető hibák detektálásával foglalkozom, így a \emph{Clang} eszköznek ezen részeit ismertetem a továbbiakban.
 
-Hogy a \emph{Clang} fordító és a \emph{Clang} driver kapcsolatát jobban megérthessük nézzük meg az AST kinyomtatásához felhasznált parancsot \ref{lst:astdump}. A következő két parancs ugyanazt az Action-t adja, és ugyanazt az analízismodulhoz tartozó műveletet indítja el. Az egyetlen különbség, hogy a második nem megy végig a driver előfeldolgozó részén, és így az esetleges rendszerhez tartozó header fájlok nem láthatóak a fordítónak, azokat a GCC esetében már megismert -I és -isystem kapcsolókkal megadhatjuk (valójában ezt teszi a driver is).
+Hogy a \emph{Clang} fordító és a \emph{Clang} driver kapcsolatát jobban megérthessük nézzük meg az absztrakt szintaxisfa (AST, abstract syntax tree) kinyomtatásához felhasznált parancsot (lásd kódrészlet \ref{lst:astdump}). A következő két parancs ugyanazt az Action-t adja, és ugyanazt az analízismodulhoz tartozó műveletet indítja el. Az egyetlen különbség, hogy a második nem megy végig a driver előfeldolgozó részén, és így az esetleges rendszerhez tartozó header fájlok nem láthatóak a fordítónak, azokat a GCC esetében már megismert -I és -isystem kapcsolókkal megadhatjuk (valójában ezt teszi a driver is).
 
 \begin{lstlisting}[caption={A driver és a compiler közvetlen kapcsolata}
 \label{lst:driverandcompiler}]
@@ -374,7 +376,7 @@ Ezt a szintet engedi vizsgálni a \emph{Clang} könyvtár három fő interfész�
 \end{itemize}
 
 \subsubsection{LibClang}
-A \emph{Clang} fejlesztői fontosabbnak tartják a hatékonyságot szem előtt tartó folyamatos átalakításokat, illetve az új funkciók minél hamarabbi bevezetését, mint a szigorúan betartott visszafele-kompatibilitást amikor a kódbázisról van szó. Ennek köszönhetően hatékony szoftvert kapunk, amikor a \emph{Clang}-et használjuk, de ez a fejlesztőktől aktívabb közreműködést vár el, amikor egy \emph{Clang} belső reprezentációval rendelkező szoftvert kell fenntartaniuk. Ez főleg a szintaxisfát érinti, amikor egy új \emph{Clang} verzióban a szintaxisfa reprezentációja megváltozik, vagy esetleg új nyelvi elemeket emelne be, akkor egy régebbi \emph{Clang} verzióval kompatibilis könyvtár elromolhat az új verzióban. Akik egy stabilabb fejlesztési felületre vágynak, azoknak megfelelő a LibClang interfész. A LibClang egy C nyelven írt könyvtár, amely bár nem biztosítja az AST-hez való közvetlen  hozzáférést, ezt áldozza fel a stabilitás kedvéért.
+A \emph{Clang} fejlesztői fontosabbnak tartják a hatékonyságot szem előtt tartó folyamatos átalakításokat, illetve az új funkciók minél hamarabbi bevezetését, mint a szigorúan betartott visszafele-kompatibilitást, amikor a kódbázisról van szó. Ennek köszönhetően hatékony szoftvert kapunk, amikor a \emph{Clang}-et használjuk, de ez a fejlesztőktől aktívabb közreműködést vár el, amikor egy \emph{Clang} belső reprezentációval rendelkező szoftvert kell fenntartaniuk. Ez főleg a szintaxisfát érinti, amikor egy új \emph{Clang} verzióban a szintaxisfa reprezentációja megváltozik, vagy esetleg új nyelvi elemeket emelne be, akkor egy régebbi \emph{Clang} verzióval kompatibilis könyvtár elromolhat az új verzióban. Akik egy stabilabb fejlesztési felületre vágynak, azoknak megfelelő a LibClang interfész. A LibClang egy C nyelven írt könyvtár, amely bár nem biztosítja az AST-hez való közvetlen  hozzáférést, ezt áldozza fel a stabilitás kedvéért.
 
 A LibClang könyvtár emellett a megszorítás mellett is sok területen kedvelt és használt. Ennek a segítségével megvalósítható a \emph{Clang} által kezelt nyelvek forráskód szintű vizsgálata. Lehetőséget a szintaxisfa bejárására a látogató (visitor) programozási minta segítségével, így relatíve magas absztrakciós szinten ad lehetőséget a forráskód statisztikai elemzésére (pl. használt nyelvi elemek száma, előfordulási sűrűsége egyes modulokon belül, más elemekkel együtt való használat gyakorisága stb.), intelligens kontextusvizsgálatra, illetve nyelvi konstrukciók forráskódbeli helyükkel való pontos összekötésére \cite{libclangdocs}. Ezen funkciók kihasználása teszi lehetővé, hogy olyan eszközöket készítsünk a LibClang felhasználásával, mint automatikus forráskódformázó eszközök, amelyek egy kódstílust leíró konfiguráció segítségével tetszőleges forrásállományt át tudnak formázni úgy, hogy csak külalakra változik, struktúrája azonban ugyanaz marad. Emellett képesek lehetünk automatikus kódkiegészítők alkotására, melyek integrált fejlesztői környezetekben (IDE) kontextusfüggően képesek javaslatokat tenni a szerkesztés alatt levő forráskódokra. Emellett a LibClang könyvtár nagy előnye a másik két lehetőséggel szemben, hogy mivel C nyelvi interfész, ezt lehet a legkönnyebben más, akár dinamikusan típusos script-nyelvek programjaiba is integrálni. Python nyelvre van a hivatalosan nyilvántartott dokumentációban is hivatkozás, mint ahogy arra is, hogy az XCode IDE az OSX rendszeren használja ezt a lehetőséget \cite{clangtooling}.
 
@@ -382,7 +384,7 @@ A LibClang könyvtár emellett a megszorítás mellett is sok területen kedvelt
 A LibTooling interfész C++ nyelvet használ, emiatt sokkal természetesebb módon, nagyobb manipulációs lehetőséget biztosít az AST-t tekintve, mint a LibClang. Elsődlegesen különálló alkalmazások fejlesztésére tervezték. Megvan a LibClang könyvtár ismertetésekor felhozott hátránya, miszerint a \emph{Clang} szintaxisfa-reprezentációinak változásakor könnyen visszafele-kompatibilitási problémák léphetnek fel. Emellett a közvetlen szintaxisfa közvetlen elérése lehetőséget ad arra, hogy bonyolultabb átalakításokat végezzünk forráskódokon. Nem csak kozmetikai változások lehetségesek, hanem akár ekvivalens, vagy valamilyen tulajdonságot megtartó strukturális átalakítások is (pl. refaktorálás vagy obfuszkálás). Emellett természetesen rendelkezésünkre áll minden, ami LibClang használata esetében is, így nagyon pontos a nyelvi elemek és forráskódbeli pozíciójuk közötti leképezés, tehát forrás-diagnosztika szoftverek alapjául is szolgálhat.
 
 \subsubsection{Clang Plugin}
-A \emph{Clang} modulárisan felépített szoftver, lehetőséget ad a kiterjesztésre. A Clang Plugin rendszer segítségével a fordítás közben különböző műveleteket végezhetünk a szintaxisfán. Ezek a művelet többek között analitikai műveletek is lehetnek, a Clang Static Analyzer (Clang SA) projekt is ezt a megoldást választotta a különböző problémákat felismerő ellenőrző modulok (checker-ek) futtásához. Lehetőség van statikus linkelésű checkerek, illetve dinamikus linkelésű beépülő modulok létrehozására is. A Clang SA alapvetően statikusan linkelt checker-eket használ. A Plugin rendszer hátránya a LibTooling-hoz képest, hogy alapvetően a fordítási folyamat részeként fut az ellenőrzés, emiatt a build-rendszer vezérli, és így egyetlen különálló forrásfájl magában nem igazán támogatott. Sokkal idiomatikusabb, és egyszerűbb ennél az eszköznél egy egész projekt elemzése. Tipikusan Plugin-t használnak még a fordítási figyelmeztetéseket adó, illetve a build-folyamat során járulékos állományokat létrehozó modulok.
+A \emph{Clang} modulárisan felépített szoftver, lehetőséget ad a kiterjesztésre. A Clang Plugin rendszer segítségével a fordítás közben különböző műveleteket végezhetünk a szintaxisfán. Ezek a műveletek többek között analitikai műveletek is lehetnek, a Clang Static Analyzer (Clang SA) projekt is ezt a megoldást választotta a különböző problémákat felismerő ellenőrző modulok (checker-ek) futtatásához. Lehetőség van statikus linkelésű checker-ek, illetve dinamikus linkelésű beépülő modulok létrehozására is. A Clang SA alapvetően statikusan linkelt checker-eket használ. A Plugin rendszer hátránya a LibTooling-hoz képest, hogy alapvetően a fordítási folyamat részeként fut az ellenőrzés, emiatt a build-rendszer vezérli, és így egyetlen különálló forrásfájl magában nem igazán támogatott. Sokkal idiomatikusabb, és egyszerűbb ennél az eszköznél egy egész projekt elemzése. Tipikusan Plugin-t használnak még a fordítási figyelmeztetéseket adó, illetve a build-folyamat során járulékos állományokat létrehozó modulok.
 
 \subsubsection{Clang Static Analyzer}
 A Clang Static Analyzer egy forráselemző, amellyel C, C++, Objective-C programok hibáit lehet megtalálni. Alapvetően parancssori eszköz, azonban hivatalos integrációja létezik az Apple XCode fejlesztői környezettel, ahol alapértelmezetten be van építve. Használata inkább kötődik a kód fordítását végző build-folyamathoz, ekkor nem egy-egy forrásfájlról ad hibainformációkat, hanem egy egész projektről, de emellett lehetőség van egyszeri fordítás ellenőrzött elvégzésére is.
@@ -411,8 +413,8 @@ A parancssori futás eredményét egy webes felületen megtekinthetjük, a scan-
 
 Az eszköz már magában is képes teljes értékű elemző, azonban a megvalósított program az Ericsson által fejlesztett \emph{CodeChecker} \cite{codecheckergit} alkalmazást használja, amely kifinomultabb, jobb kezelhetőséget, és felhasználói élményt biztosít az ellenőrzések futtatására.
 
-\chapter{Checkerek}
-A Clang SA egy keretrendszer, amely a képes a checker-ek futtatására. Két féléves gyakorlatom során amit az Ericsson csapatával töltöttem két checker-t implementáltam. Az egyik a C++ nyelvi I/O könyvtár, a stream-ek helyes használatával foglakozik, a másik egész számtípusokon végzett típuskonverziókkal.
+\chapter{Checker-ek}
+A Clang SA egy keretrendszer, amely a képes a checker-ek futtatására. Két féléves gyakorlatom során, amit az Ericsson csapatával töltöttem két checker-t implementáltam. Az egyik a C++ nyelvi I/O könyvtár, a stream-ek helyes használatával foglakozik, a másik egész számtípusokon végzett típuskonverziókkal.
 Ha egy checker már a \emph{Clang} része, akkor közvetlenül is futtathatjuk a parancssorból, használhatjuk a Clang SA scan-build, vagy scan-build-py eszközöket, vagy ezekre épülő eszközöket, például az Ericsson által fejlesztett \emph{CodeChecker}-t.
 
 \begin{lstlisting}[caption={Clang SA Checker futtatása közvetlenül}
@@ -421,7 +423,7 @@ clang -cc1 -analyze -analyzer-checker=<name of checker to run> <source files>
 \end{lstlisting}
 
 \section{Fejlesztői útmutató Checker-ekhez}
-A Checker-ek az \emph{LLVM}, ezen belül a \emph{Clang} eszköz forráskönyvtárában helyet foglaló C++ állományok és néhány bejegyzés amelyek felfedezhetővé teszik a build-rendszer számára az új Checkert. Hogy egy Checkert hozzá tudjunk adni a \emph{Clang} fordítóhoz, meg kell szereznünk az \emph{LLVM} és \emph{Clang} forrást \cite{getllvmpage}.
+A Checker-ek az \emph{LLVM}, ezen belül a \emph{Clang} eszköz forráskönyvtárában helyet foglaló C++ állományok és néhány bejegyzés, amelyek felfedezhetővé teszik a build-rendszer számára az új Checkert. Hogy egy Checkert hozzá tudjunk adni a \emph{Clang} fordítóhoz, meg kell szereznünk az \emph{LLVM} és \emph{Clang} forrást \cite{getllvmpage}.
 
 \begin{lstlisting}[caption={Clang beszerzése GitHubról.}
 \label{lst:getllvm}]
@@ -446,7 +448,7 @@ void ento::registerExampleChecker(CheckerManager &mgr) {
 
 Az előbbi \ref{lst:checkerregistration} regisztrációs kód megköveteli, hogy az implementáció logikáját tartalmazó osztály neve ExampleChecker legyen.
 
-Az llvm/tools/clang/lib/StaticAnalyzer/Checkers/Checkers.td fileban kell még bejegyeznünk a checker-ünket ahhoz, hogy a tablegen megtalálja.
+Az llvm/tools/clang/lib/StaticAnalyzer/Checkers/Checkers.td fájl-ban kell még bejegyeznünk a checker-ünket ahhoz, hogy a tablegen megtalálja.
 
 \begin{lstlisting}[caption={Checker beregisztrálása tablegen eszköz számára. Forrás \cite{checkerdevmanual}}
 \label{lst:checkerregistrationtablegen}]
@@ -469,7 +471,7 @@ cmake ../llvm
 make
 \end{lstlisting}
 
-Az \emph{LLVM} és a \emph{Clang} nagy projektek, sokáig tarthat a fordítás, és a linkelés fázisában sok memóriára van szükség. Ezeken a problémákon segíthetünk ha például a legtöbb Linux rendszerben elérhető gold linkert használjuk, amely kisebb memóriaigénnyel bír, így akár több folyamatot is indíthatunk amikor a \texttt{make} parancsot kiadjuk (például \texttt{make -j4}).
+Az \emph{LLVM} és a \emph{Clang} nagy projektek, sokáig tarthat a fordítás, és a linkelés fázisában sok memóriára van szükség. Ezeken a problémákon segíthetünk ha például a legtöbb Linux rendszerben elérhető gold linkert használjuk, amely kisebb memóriaigénnyel bír, így akár több folyamatot is indíthatunk, amikor a \texttt{make} parancsot kiadjuk (például \texttt{make -j4}).
 
 A fordítási folyamat felgyorsítása érdekében használhatjuk a ninja nevű build-rendszert, ehhez telepítenünk kell a ninja csomagot, és az általunk kiadott a cmake parancsban a \texttt{-GNinja} kapcsolót is meg kell adnunk.
 
@@ -483,7 +485,8 @@ clang -cc1 -analyzer-checker-help
 \end{lstlisting}
 
 \section{OStreamFormatChecker}
-Az OStreamFormatChecker a C++ nyelvi könyvtárat ellenőrzi, és segítségével meg lehet találni olyan kódrészleteket, amelyek átállították egy \texttt{std::ostream} típusú, írható, vagyis kimeneti stream formázási állapotát, de utána nagy valószínűséggel elfelejtették ezt visszaállítani.
+Az OStreamFormatChecker a C++ nyelvi könyvtárat
+ használatát ellenőrzi, és segítségével meg lehet találni olyan kódrészleteket, amelyek átállították egy \texttt{std::ostream} típusú, írható, vagyis kimeneti stream formázási állapotát, de utána nagy valószínűséggel elfelejtették ezt visszaállítani.
 
 \subsection{Specifikáció}
 A problémát egy mintakóddal specifikáljuk, mely során a kódsorokban kommentek formájában jelezzük, hogy az elvárt működés szerint ott hibát kell-e adnia checker-nek vagy nem. Ehhez hasonló rendszert használ az \emph{LLVM} projekt beépített tesztelő keretrendszere is, tehát a checker-hez tartozó tesztelő kódomban is ilyen formátumban jeleztem, ha valahol elvárt jelenség az, hogy hibát jelezzen a checker.
@@ -546,7 +549,7 @@ A C illetve C++ nyelv is rendelkezik enumeráció (felsorolási) adattípussal, 
 
 \begin{lstlisting}[caption={Enumerációs típusok tipikus felhasználása.}
 \label{lst:enumdemo}]
-enum Nap { Hetfo, Kedd, Szerda, Csutortok, Pentek, Szombat, Vasarnap }
+enum Nap { Hetfo, Kedd, Szerda, Csutortok, Pentek, Szombat, Vasarnap };
 \end{lstlisting}
 
 Lehetőség van C-ben és C++-ban is, hogy bármilyen megfelelő egész típusú értéket enumeráció típusúvá alakítsunk, a típuscserét sokszor valamilyen explicit konverzió (cast), segítségével érhetjük el. Abban az esetben viszont, amikor egy olyan egész értéket szeretnénk egy enumeráció típusba kényszeríteni, amelyik nem reprezentál egy valódi enumeráció értéket sem, nem definiált a keletkezett érték.
@@ -569,7 +572,7 @@ struct Factorial<0>
   static const int val = 1;
 };
 
-enum blabla { a = 4, b = 8, c, d = 3, e = Factorial<5>::val };
+enum dummy { a = 4, b = 8, c, d = 3, e = Factorial<5>::val };
 \end{lstlisting}
 
 Ebben a példában a C++ nyelvi sajátosságait felhasználva fordításidőben kerül kiszámításra a faktoriális értéke. Külön érdekesség, hogy itt a rekurzió alapesetének definiálása egy template-specializációval történik.
@@ -578,7 +581,7 @@ Ebben a példában a C++ nyelvi sajátosságait felhasználva fordításidőben 
 \subsection{Specifikáció}
 A probléma specifikálása több részletben történik \cite{securecodingint50}, először egy potenciálisan hibás esetet mutat be, amelyben megtörténik a típuskonverzió, és potenciálisan nem definiált az eredménye.
 
-\begin{lstlisting}[caption={EnumOutOfRangeChecker potenciálisan hibás specifikációja}
+\begin{lstlisting}[caption={EnumCastOutOfRange specifikációja szerint hibás kód}
 \label{lst:enumcastpotentialerror}]
 enum EnumType {
   First,
@@ -597,7 +600,7 @@ void f(int intVar) {
 
 A következő specifikáció egy mindenképpen helyes használatot vázol fel, erre semmiféleképpen nem szabad hibát jeleznie a checker-nek.
 
-\begin{lstlisting}[caption={EnumOutOfRangeChecker potenciálisan hibás specifikációja}
+\begin{lstlisting}[caption={EnumCastOutOfRange specifikációja szerint helyes használat}
 \label{lst:enumcastok}]
 enum EnumType {
   First,
@@ -608,18 +611,19 @@ enum EnumType {
 void f(int intVar) {
   if (intVar < First || intVar > Third) {
     // Handle error
+    return;
   }
   EnumType enumVar = static_cast<EnumType>(intVar);
 }
 \end{lstlisting}
 
-Emellett vannak még esetek, ahol nem szükséges hibát adnunk. Ezekben az esetekben viszont vagy C++11-es enumerációkról van szó, vagy fix háttértípussal rendelkezőekről. A checker azonban szimbolikus végrehajtást használva jelenleg abban az esetben ad hibát, ha egyértelműen kiderül, hogy az érték amire a típuskonverziót alkalmazzuk egyértelműen nincs benne az enumeráció értékkészletében. Azért használ ilyen konzervatív feltételt, hogy el tudja kerülni a hamis pozitív jelzéseket.
+Emellett vannak még esetek, ahol nem szükséges hibát adnunk. Ezekben az esetekben viszont vagy C++11-es enumerációkról van szó, vagy fix háttértípussal rendelkezőekről. A checker azonban szimbolikus végrehajtást használva jelenleg abban az esetben ad hibát, ha egyértelműen kiderül, hogy az érték, amire a típuskonverziót alkalmazzuk egyértelműen nincs benne az enumeráció értékkészletében. Azért használ ilyen konzervatív feltételt, hogy el tudja kerülni a hamis pozitív jelzéseket.
 
 \chapter{Felhasználói dokumentáció}
-A CheckRunner egy grafikus felülettel rendelkező szoftver, mely képes a \emph{Clang} eszköz által támogatott checker-ek segítségével statikus analízis futtatására, és az eredmények megtekintésére. Mindezt a felhasználó egy jól kezelhető, áttekinthető felületen teheti. Célja, hogy demonstrálja a statikus analízis megvalósításának lehetőségit. A \emph{CodeChecker} eszközzel való laza, de mégis hatékony összekötés bemutatja a statikus analízist támogató eszközök együttműködési képességeit, és hatékony segítsége lehet a C nyelvi család tagjaival foglalkozó szoftverfejlesztőknek.
+A CheckRunner egy grafikus felülettel rendelkező szoftver, mely képes a \emph{Clang} eszköz által támogatott checker-ek segítségével statikus analízis futtatására, és az eredmények megtekintésére. Mindezt a felhasználó egy jól kezelhető, áttekinthető felületen teheti. Célja, hogy demonstrálja a statikus analízis megvalósításának lehetőségeit. A \emph{CodeChecker} eszközzel való laza, de mégis hatékony összekötés bemutatja a statikus analízist támogató eszközök együttműködési képességeit, és hatékony segítsége lehet a C nyelvi család tagjaival foglalkozó szoftverfejlesztőknek.
 
 \section{CodeChecker}
-A CodeChecher projekt az Ericsson által fejlesztett nyílt forráskódú, dinamikusan fejlődő és hatékony eszköz, amely nem csak a Clang SA hanem a Clang Tidy elemzővel is együtt tud működni. Robosztus és felhasználóbarát felületet ad az analízis végrehajtására, és az eredmények megtekintésére. Emellett képes az eredmények összehasonlítására, rendezésére is.
+A CodeChecker projekt az Ericsson által fejlesztett nyílt forráskódú, dinamikusan fejlődő és hatékony eszköz, amely nem csak a Clang SA hanem a Clang Tidy elemzővel is együtt tud működni. Robosztus és felhasználóbarát felületet ad az analízis végrehajtására, és az eredmények megtekintésére. Emellett képes az eredmények összehasonlítására, rendezésére is.
 
 \begin{figure}[h]
 \caption{CodeChecker architektúra. Forrás \cite{codecheckerslide}}
@@ -628,10 +632,10 @@ A CodeChecher projekt az Ericsson által fejlesztett nyílt forráskódú, dinam
 \end{figure}
 
 \section{Rendszerkövetelmények}
-A felhasznált eszközök technikai hátteréből kifolyóan UNIX alapú rendszereken képes hatékonyan futni a mögöttes keretrendszer illetve a CheckRunnert közvetlenül kiszolgáló \emph{CodeChecker} szoftver is. Ebből kifolyólag a program futtatásához egy Linux Ubuntu 16.04 LTS 64 bites operációs rendszer szükséges AMD64 (más néven X86-64) architektúrás processzorral ellátott PC-vel.
+A felhasznált eszközök technikai hátteréből kifolyóan UNIX alapú rendszereken képes hatékonyan futni a mögöttes keretrendszer, illetve a \emph{CodeChecker} szoftver is. Ebből kifolyólag a program futtatásához egy Linux Ubuntu 16.04 LTS 64 bites operációs rendszer szükséges AMD64 (más néven X86-64) architektúrás processzorral ellátott PC-vel.
 
 \section{Telepítés}
-A futtatáshoz szükséges a Python programnyelvi környezet 3-as verziója, emellett a CodeChecker szoftver függőségei. A szakdolgozat írásakor elérhető Ubuntu 16.04-es verziójú Linux disztribúció beépített Python 3.5.2-es verzióján tesztelve is lett a szoftver.
+A futtatáshoz szükséges a Python programnyelvi környezet 3-as verziója, emellett a CodeChecker szoftver függőségei. A szakdolgozat írásakor elérhető Ubuntu 16.04-es verziójú Linux disztribúció beépített Python 3.5.2-es verzióján teszteltem a szoftver.
 
 Egy ilyen összeállítás mellett a mellékleten található checkrunner mappát kell tetszőleges helyre átmásolni. A mappa tartalmazza a \emph{CodeChecker} 5.7.1-es verzióját a \texttt{codechecker} mappában. Használat előtt a \emph{CodeChecker} oldalán dokumentált függőségeket a csomagkezelőből telepíteni kell.
 
@@ -645,7 +649,8 @@ sudo apt-get install clang-3.8 build-essential curl doxygen gcc-multilib \
 
 Ezután a könyvtárban található \texttt{install.sh} script segítségével lehet telepíteni a CodeCheker-t, és magát az alkalmazást is. Internetkapcsolat szükséges, mert a Python csomagkezelő, illetve a CodeChecker egyedi függőségeinek feloldása is megköveteli. A \emph{CodeChecker} alapértelmezetten a függőségek között feltelepített clang-3.8 -as verziót használja, de természetesen lehetőség van felhasználó által összeállított könyvtár használatára is. Ennek lépéseit már ismertettem a dolgozat első felében a 3.1-es fejezetben. Ha az aktuális felhasználó home könyvtárában végeztük az ott szereplő lépéseket, akkor a program már alapértelmezetten azt használja, elősegítve a fejlesztői környezet gyors összeállítását. Ha esetleg más könyvtárban tároljuk a lefordított \emph{LLVM} és \emph{Clang} komponenseket, akkor a használni kívánt könyvtárat a \texttt{codechecker-wrapper} állományban állíthatjuk be.
 
-A programot a \texttt{checkrunner.sh} állomány segítségével indíthatjuk el. A grafikus felület indításakor a program kezelőfelületén láthatjuk az aktuálisan használt \emph{Clang} eszközben regisztrált checker-eket a bal felső részen. A felület lehetőséget biztosít arra, hogy csak bizonyos checker-eket futtassunk le. Ez kifejezetten hasznos amikor tesztelni szeretnénk egy általunk fejlesztett modult. A modulok neve szerepel a felsorolásban, amelyek mellett pipálható dobozok segítségével érvényesíthetjük a választásunkat.
+\section{Használat}
+A programot a \texttt{checkrunner.sh} állomány segítségével indíthatjuk el. A grafikus felület indításakor a program kezelőfelületén láthatjuk az aktuálisan használt \emph{Clang} eszközben regisztrált checker-eket a bal felső részen. A felület lehetőséget biztosít arra, hogy csak bizonyos checker-eket futtassunk le. Ez kifejezetten hasznos, amikor tesztelni szeretnénk egy általunk fejlesztett modult. A modulok neve szerepel a felsorolásban, amelyek mellett pipálható dobozok (checkbox-ok) segítségével érvényesíthetjük a választásunkat.
 
 
 \begin{figure}[h]
@@ -654,7 +659,7 @@ A programot a \texttt{checkrunner.sh} állomány segítségével indíthatjuk el
 \includegraphics[scale=0.36]{ui.png}
 \end{figure}
 
-A felület bal alsó részén található egy indikátor, mely a háttérben futó adatbázis, és webszerver állapotát hivatott mutatni, ha \emph{Running!} szöveg szerepel, akkor fut, és ebben az esetben lehetőség van a használat megkezdésére. A következő sorban megadhatjuk az analízis nevét, ezzel tudjuk megtalálni a későbbiekben. A következő sorban meg kell adnunk azt az útvonalat, amely az elemzésre váró projekthez tartozik. Megkötés, hogy csak olyan projektmappát választhatunk ki, amely rendelkezik egy \texttt{Makefile} állománnyal. Ha esetlegesen nem a GNU Make alkalmazás segítségével működik a build rendszerünk, akkor sok esetben valamilyen előfeldolgozó lépés után Makefile-okhoz juthatunk, és akkor az alkalmazás már tudja futtatni az analízist. Abban az esetben, ha nem megfelelő a könyvtár, a program informatív hibaüzenettel kommunikálja ezt a felhasználó felé. Ameddig az analízis nem futtatható, addig szürke állapotban láthatjuk a \emph{Run check} gombot.
+A felhasználói felület indításakor automatikusan elindítja a CodeChecker beépített adatbázis, és webszerver komponensét, és ezen komponensek folyamatos működése előfeltétele a program működésének. A felület bal alsó részén található egy indikátor, mely a háttérben futó adatbázis, és webszerver állapotát hivatott mutatni. Ha \emph{Running!} szöveg szerepel, akkor fut, és ebben az esetben lehetőség van a használat megkezdésére. A következő sorban megadhatjuk az analízis nevét, ezzel tudjuk megtalálni a későbbiekben. A következő sorban meg kell adnunk azt az útvonalat, amely az elemzésre váró projekthez tartozik. Megkötés, hogy csak olyan projektmappát választhatunk ki, amely rendelkezik egy \texttt{Makefile} állománnyal. Ha esetlegesen nem a GNU Make alkalmazás segítségével működik a build rendszerünk, akkor sok esetben valamilyen előfeldolgozó lépés után Makefile-okhoz juthatunk, és akkor az alkalmazás már tudja futtatni az analízist. Abban az esetben, ha nem megfelelő a könyvtár, a program informatív hibaüzenettel kommunikálja ezt a felhasználó felé. Ameddig az analízis nem futtatható, addig szürke állapotban láthatjuk a \emph{Run check} gombot.
 
 
 \begin{figure}[h]
@@ -671,7 +676,7 @@ A felület jobb oldalán található a program fő nézete, amely a háttérben 
 \includegraphics[scale=0.8]{progress_bar.png}
 \end{figure}
 
-Amikor az analízis véget ér, vagy a felhasználó meggondolja magát és a \texttt{Cancel} gombra kattint, akkor a dialógusablak eltűnik, és a jobb oldali megjelenítőfelület frissítésre kerül. Az újonnan lefutott analízis , a régiekkel együtt meg kell, hogy jelenjen a listában, mellettük statisztikai információk mutatják a futások idejét, a talált hibák számát, a folyamat futásának teljes idejét, illetve a felhasznált parancsot. Ennek a parancsnak segítségével parancssori környezetből is le lehet futtatni ugyanazt a vizsgálatot. Az általunk implementált checker-eket el lehet érni mind a parancssori, mind a grafikus felületről. A parancssori futtatáshoz a 3. fejezet tartalmaz mintákat. 
+Amikor az analízis véget ér, vagy a felhasználó meggondolja magát és a \texttt{Cancel} gombra kattint, akkor a dialógusablak eltűnik, és a jobb oldali megjelenítőfelület frissítésre kerül. Ekkor az újonnan lefutott analízis is megjelenik a listában a korábbiak mellett. A felületen látható statisztikai információk mutatják a futások idejét, a talált hibák számát, a folyamat futásának teljes idejét, illetve a felhasznált parancsot. Ennek a parancsnak segítségével parancssori környezetből is le lehet futtatni ugyanazt a vizsgálatot. Az általunk implementált checker-eket el lehet érni mind a parancssori, mind a grafikus felületről. A parancssori futtatáshoz a 3. fejezet tartalmaz mintákat. 
 
 Itt lehetőségünk van még az egyes futások eredményeinek törlésére, illetve ha az első oszlopban szereplő kijelölő pipák segítségével két futást kiválasztunk, akkor a bal alsó részen lévő \texttt{Diff} gomb segítségével megtekinthetjük a két futás során keletkezett hibaesemények összehasonlítását. A második oszlopban, a futás nevére kattintva megtekinthetjük a futás eredményét közelebbről is.
 
@@ -681,14 +686,14 @@ Itt lehetőségünk van még az egyes futások eredményeinek törlésére, ille
 \includegraphics[scale=0.4]{ui_results_open.png}
 \end{figure}
 
-A program \texttt{File} menüjében egy \texttt{Open} és egy \texttt{Exit} művelet található. Az \texttt{Open} művelet ugyanazt a szerepet látja el mint a build-könyvtárat kiválasztó gomb, de lehetőség van \texttt{Control-O} billentyűparancssal az elérésére. Az \texttt{Exit} művelet értelemszerűen a kilépésre szolgál, billentyűparancsa a \texttt{Control-Q}. Emellett az ablakkezelő rendszer szokások kicsinyítés és nagyítás, tálcára helyezés és befejezés műveleteit is használhatjuk.
+A program \texttt{File} menüjében egy \texttt{Open} és egy \texttt{Exit} művelet található. Az \texttt{Open} művelet ugyanazt a szerepet látja el, mint a build-könyvtárat kiválasztó gomb, de lehetőség van \texttt{Control-O} billentyűparanccsal az elérésére. Az \texttt{Exit} művelet értelemszerűen a kilépésre szolgál, billentyűparancsa a \texttt{Control-Q}. Emellett az ablakkezelő rendszer szokásos kicsinyítés és nagyítás, tálcára helyezés és befejezés műveleteit is használhatjuk.
 
 \chapter{Fejlesztői dokumentáció}
 
 \section{Grafikus felület}
-A program felhasználói felülete a Qt eredetileg C++-ban írt rendszerét használja, mégis a CheckRunner végleges verziója Python nyelven került megvalósításra. A PyQt5 csomag gondoskodik a grafikus keretrendszer dinamikusan betölthető könyvtárainak elérhetővé tételéről. A modul írói elvégezték azokat a platformspecifikus illesztéseket, amelyek lehetővé teszik, hogy egy univerzális Python 3-as alkalmazás is ki tudja használni a Qt keretrendszer közel minden funkcióját.
+A program felhasználói felülete a Qt \cite{qthomepage} eredetileg C++-ban írt rendszerét használja, mégis a CheckRunner végleges verziója Python nyelven került megvalósításra. A PyQt5 csomag gondoskodik a grafikus keretrendszer dinamikusan betölthető könyvtárainak elérhetővé tételéről. A modul írói elvégezték azokat a platformspecifikus illesztéseket, amelyek lehetővé teszik, hogy egy univerzális Python 3-as alkalmazás is ki tudja használni a Qt keretrendszer közel minden funkcióját.
 
-A CheckRunner szoftveren való fejlesztésbe be lehet tehát kapcsolódni anélkül, hogy a felhasználói követelményeknél többet kellene teljesítenünk. A program alapvetően egy főablakból áll, amely modulárisan felhasznál három másik komponenst, hogy a CodeChecker háttérfolyamatokkal kommunikáljon. A program által megoldott problémák közül a háttérfolyamatokkal való kommunkáció volt a legérdekesebb. Előfordulnak egyszeri, gyorsan lefutó parancsok, hosszantartó folyamatok, melyekkel kommunikálni kell, és egy olyan folyamat is amely maga is szülőprocessz-ként viselkedik, és amelynek megállítása nem vonja maga után a gyerekeinek a megállását sem. Ezen esetek a fejlesztés során szerzett tapasztalataim szerint mind előfordulnak.
+A CheckRunner szoftveren való fejlesztésbe be lehet tehát kapcsolódni anélkül, hogy a felhasználói követelményeknél többet kellene teljesítenünk. A program alapvetően egy főablakból áll, amely modulárisan felhasznál három másik komponenst, hogy a CodeChecker háttérfolyamatokkal kommunikáljon. A program által megoldott problémák közül a háttérfolyamatokkal való kommunkáció volt a legérdekesebb. Előfordulnak egyszeri, gyorsan lefutó parancsok, hosszantartó folyamatok, melyekkel kommunikálni kell, és egy olyan folyamat is, amely maga is szülőprocessz-ként viselkedik, és amelynek megállítása nem vonja maga után a gyerekeinek a megállását sem. Ezen esetek a fejlesztés során szerzett tapasztalataim szerint mind előfordulnak.
 
 \begin{figure}[h]
 \caption{Alkalmazás-architektúra.}
@@ -696,11 +701,11 @@ A CheckRunner szoftveren való fejlesztésbe be lehet tehát kapcsolódni anélk
 \includegraphics[scale=0.4]{architektura.png}
 \end{figure}
 
-A Qt rendszer egy eseményvezérelt működést támogató rendszer, ehhez a támogatáshoz szükség van bizonyos konvenciók betartására. Az eredei C++-os rendszerben makrók segítségével köti össze a metaobjektum-fordító (MOC) az eseményvezérlést megvalósító signal és slot függvényeket. Ahhoz, hogy ez a rendszer működjön, a dinamikusan típusos Python esetében nincs ilyen előfeldolgozásra szükség, és megengedett jelzéskezelő függvények köre is jóval tágabb. Természetesen ennek futásidőben jelentkező következményei vannak, azonban a  program megalkotásakor fontosabb szempontnak tartottam, hogy széles körben legyen használható, egyszerű legyen a kihelyezés (deployment) és a fejlesztői környezet felállítása. A fejlesztés eredetileg C++ rendszerben kezdődött, azonban ezen szempontok miatt a végső megvalósítás mégis Python nyelven történt.
+A Qt rendszer egy eseményvezérelt működést támogató rendszer, ehhez a támogatáshoz szükség van bizonyos konvenciók betartására. Az eredeti C++-os rendszerben makrók segítségével köti össze a metaobjektum-fordító (MOC) az eseményvezérlést megvalósító signal és slot függvényeket. Ahhoz, hogy ez a rendszer működjön, a dinamikusan típusos Python esetében nincs ilyen előfeldolgozásra szükség, és megengedett jelzéskezelő függvények köre is jóval tágabb. Természetesen ennek futásidőben jelentkező következményei vannak, azonban a  program megalkotásakor fontosabb szempontnak tartottam, hogy széles körben legyen használható, egyszerű legyen a kihelyezés (deployment) és a fejlesztői környezet felállítása. A fejlesztés eredetileg C++ rendszerben kezdődött, azonban ezen szempontok miatt a végső megvalósítás mégis Python nyelven történt.
 
 Meg kell említeni még, hogy a CodeChecker rendszer is Python nyelven íródott, és elképzelhető lenne a szorosabb integráció is. Ezt két szempont miatt vetettem el. Egyrészt a PyQt5 a Python nyelv hármas verzióját használja, a CodeChecker viszont a ketteset. A CodeChecker kódbázisának felületes áttekintése után megállapítható, hogy hozzáértő fejlesztők dolgoznak rajta, az esetleges integrációs törekvések nem ütköznének nagy problémába, azonban a CheckRunner alkalmazás megvalósításához nem volt erre szükség. A másik szempont az volt, hogy bemutassam a jól elkülönített komponensek flexibilisen összeállított rendszerét. A CheckRunner maga kis változtatásokkal képes lenne más, a CodeCheckerhez hasonlóan jól felszerelt futtatási környezetekkel együttműködni. Az ilyen megvalósítások manapság egyre terjedőben vannak, és a virtualizáció, illetve a konténer-technológia is hasonló megoldásokkal él.
 
-A program forrásfájljait a mellékelt projektkönyvtáron belül a src mappában találhatjuk. A MainWindow felhasználja még a QtCreator segítségével megalkotott mainwindow.ui XML formátumú leírófájlt, illetve az ebből keletkezett Ui\_Main\_Window.py Python forrásfájlt. A PyQt5 pyuic5 parancssori alkalmazásával lehet a .ui fájlokat lefordítani. A használatához érdemes bekapcsolni a virtualenv környezetet, így bárhonnan elérhetjük a parancsot.
+A program forrásfájljait a mellékelt projektkönyvtáron belül a src mappában találhatjuk. A MainWindow felhasználja még a QtCreator segítségével megalkotott mainwindow.ui XML formátumú leírófájlt, illetve az ebből keletkezett Ui\_Main\_Window.py Python forrásfájlt. A PyQt5 \texttt{pyuic5} parancssori alkalmazásával lehet a .ui fájlokat lefordítani. Alapértelmezetten a sztenderd kimenetre írja ki a felhasználói felület Python nyelvű megvalósítását, de a -x kapcsolóval megadhatunk egy fájlnevet is. Utóbbi esetben ez a fájl fogja tartalmazni az implementációt. A \texttt{pyuic5} használatához érdemes bekapcsolni a virtualenv környezetet, így bárhonnan elérhetjük a parancsot.
 
 \begin{lstlisting}[caption={Virtuális környezet aktiválása.}
 \label{lst:activatevirtualenv}]
@@ -728,9 +733,11 @@ Mindhárom alkomponens szignálokkal kommunikál a főablakkal, hogy az aszinkro
 \includegraphics[scale=0.3]{osztalydiagram.png}
 \end{figure}
 
-A kiválasztott és nem kiválasztott checkereket külön külön listában tartjuk számon, mert alapvetően a CheckExecutor osztály executeCheck metódusának parancssori paraméterekel kell felsorolnia, hogy mely checker-eket kívánja futtatni és melyeket kihagyni. A checker-ek leképezése a felhasználó felület kiválasztott elemeivé, illetve a fordított irányú konverzió a MainWindow osztályban zajlik le.
+A kiválasztott és nem kiválasztott checker-eket külön-külön listában tartjuk számon, mert alapvetően a CheckExecutor osztály executeCheck metódusának parancssori paraméterekkel kell felsorolnia, hogy mely checker-eket kívánja futtatni és melyeket kihagyni. A checker-ek leképezése a felhasználói felület kiválasztott elemeivé, illetve a fordított irányú konverzió a MainWindow osztályban zajlik le.
 
 A CodeChecker hagyományos használatával ellentétben a CheckRunner nem egy parancs keretében tisztítja meg a build-könyvtára és építi újból a vizsgált projektet, hanem két egymást követő folyamat keretében. Ennek a QProcess osztály parancsértelmező képessége szab határt, nem tud beágyazott parancsokat kezelni. Emiatt a folyamatkezelés kissé bonyolultabb lesz az executeCheck metódusban.
+
+A program a CodeChecker-rel való együttműködése során kihasználja  annak szolgáltatásait, egyrészt, hogy a checker-futtatás eredményét egy alapértelmezetten fájlalapú adatbázisban tárolja, másrészt, hogy ezzel az adatbázissal kommunikálva, webes felületen biztosít hozzáférést a CodeChecker az eredményekhez.
 
 \begin{figure}[h]
 \caption{Felhasználói esetek.}
@@ -738,7 +745,7 @@ A CodeChecker hagyományos használatával ellentétben a CheckRunner nem egy pa
 \includegraphics[scale=0.7]{felhasznaloi.png}
 \end{figure}
 
-\section{Checkerek}
+\section{Checker-ek}
 Az általam megvalósított két checker a Clang SA részeként értelmezett modulok formájában létezik, ha ki szeretnénk próbálni, vagy mintájukra újabb checker-eket készíteni, akkor megtalálhatóak a mellékelt adathordozón. Mindkét checker esetében a forrásfájlt, és a teszteseteket tartalmazó fájlt mellékeltem, a checkers mappában, ezek alapján elvégezhető a 3.1 -es fejezetben már ismertetett folyamat, és készíthető egy olyan lefordított Clang példány, amely már rendelkezésünkre adja őket.
 
 A statikus analízis folyamán a szimbolikus végrehajtást végző rendszer az AST alapján felépít egy CFG-t, majd ennek a gráfnak a segítségével modellezi az összes lehetséges futási útvonalat. Ezen lehetséges utak állomásai is egy gráfot képeznek, ezt a Clang SA \texttt{Exploded Graph}-nak hívja, és egy \texttt{ProgramPoint} és egy \texttt{ProgramState} típusú objektummal reprezentálja egy csúcsát. A \texttt{ProgramPoint} megmondja, hogy a CFG-n belül hol jár a program, a \texttt{ProgramState} pedig a program és az éppen futó ellenőrzés közös állapotát írja le. A \texttt{ProgramState} három fő komponenssel bír:
@@ -749,13 +756,13 @@ A statikus analízis folyamán a szimbolikus végrehajtást végző rendszer az 
 \item általános adatok, az ellenőrzés során a checker-ek által összegyűjtött adatok jelenlegi értéke
 \end{itemize}
 
-A checker-ek úgy működnek, hogy amikor a Clang SA szimbolikus végrehajtást végez, akkor minden programkódbeli kifejezés, illetve utasítás során annak típusától függően futtatja a megfelelő checker-t vagy checker-eket. Ez a megvalósítás a megfigyelő (observer) programozási minta egy jó példája, a checker megfigyelőként feliratkozik azokra az utasítástípusokra, amelyek számára érdekesek, és Clang SA elemzési folyamatai során a feliratkozott checkereket értesíti, hogy bekövetkezett a megfelelő utasítás feldolgozásának eseménye.
+A checker-ek úgy működnek, hogy amikor a Clang SA szimbolikus végrehajtást végez, akkor minden programkódbeli kifejezés, illetve utasítás során annak típusától függően futtatja a megfelelő checker-t vagy checker-eket. Ez a megvalósítás a megfigyelő (observer) programozási minta egy jó példája, a checker megfigyelőként feliratkozik azokra az utasítástípusokra, amelyek számára érdekesek, és Clang SA elemzési folyamatai során a feliratkozott checker-eket értesíti, hogy bekövetkezett a megfelelő utasítás feldolgozásának eseménye.
 
-Amikor egy checker megvalósítunk, az első fontos döntés, hogy milyen eseményekre, vagyis milyen típusú kifejezések feldolgozására iratkozunk fel. Ennek a hátterében az áll, egy adott probléma esetében ki kell dolgoznunk a probléma megoldását, de a statikus analízis nyelvén, vagyis egy olyan algoritmust kell találnunk, amely tudja, hogy milyen milyen kifejezések érdekesek a számára, és ezekre hogyan reagáljon.
+Amikor egy checker-t megvalósítunk, az első fontos döntés, hogy milyen eseményekre, vagyis milyen típusú kifejezések feldolgozására iratkozunk fel. Ennek a hátterében az áll, egy adott probléma esetében ki kell dolgoznunk a probléma megoldását, de a statikus analízis nyelvén, vagyis egy olyan algoritmust kell találnunk, amely tudja, hogy milyen milyen kifejezések érdekesek a számára, és ezekre hogyan reagáljon.
 
-A OStreamFormatChecker célkitűzése az volt, hogy adjon figyelmeztető üzenetet abban az esetben, ha valaki átállított egy formázási opciót a egy kimeneti stream objektumon, és utána elfelejtette visszaállítani azt, ha már nem használja. Ebben az esetben több probléma is felmerül. A kód írója bármikor átállíthatja ezeket a formátumjelzőket olyan céllal, mert neki nem tetszik az alapértelmezett beállítás és végig máshogy szeretné használni a kimenetet. Emellett előfordulhat, hogy valaki csak egy környezetben szeretné máshogy használni a stream objektumot. Az tehát, hogy mikor felejtett el valaki valamilyen beállítást visszaállítani (ha egyátalán vissza akarta valaha), nem triviális kérdés. Mégis vannak olyan eset amikor jobbnak látjuk, hogy hibát kapunk, mintsem akkor lepődjünk meg, vagy esetleg egy másik komponens, amely utánunk használja a kimenetet, hogy nem a szokványos formázással jelennek meg az adataink.
+A OStreamFormatChecker célkitűzése az volt, hogy adjon figyelmeztető üzenetet abban az esetben, ha valaki átállított egy formázási opciót egy kimeneti stream objektumon, és utána elfelejtette visszaállítani azt, ha már nem használja. Ebben az esetben több probléma is felmerül. A kód írója bármikor átállíthatja ezeket a formátumjelzőket olyan céllal, mert neki nem tetszik az alapértelmezett beállítás és végig máshogy szeretné használni a kimenetet. Emellett előfordulhat, hogy valaki csak egy környezetben szeretné máshogy használni a stream objektumot. Az tehát, hogy mikor felejtett el valaki valamilyen beállítást visszaállítani (ha egyátalán vissza akarta valaha), nem triviális kérdés. Mégis vannak olyan esetek, amikor jobbnak látjuk, hogy figyelmeztetést kapunk, mintsem akkor lepődjünk meg, vagy esetleg egy másik komponens, amely utánunk használja a kimenetet, hogy nem a szokványos formázással jelennek meg az adatok.
 
-Az OStreamFormatChecker esetében a következő formában fogalmaztam meg az eredeti problémát a programozási nyelvek konstrukciói alapján: Adjon a checker hibaüzenetet ha egy függvényhívás végére érünk, és ennek a függvényhívásnak blokkjában (vagyis lexikális környezetében) volt olyan módosítás egy kimeneti streamben, ami nem lett visszaállítva az alaphelyzetbe. Kivételt képez az az eset, ha egy stream objektumtól lekérdezték a formátumait jelző állapotbiteket. Ilyenkor azt feltételezzük, hogy aki lekérte ezeket az majd vissza is fogja állítani az eredeti állapotot (más praktikus célja nem nagyon létezik a formátum-flagek lekérésének). Ez már az eredeti problémát elég jól közelítő modell.
+Az OStreamFormatChecker esetében a következő formában fogalmaztam meg az eredeti problémát a programozási nyelvek konstrukciói alapján: Adjon a checker hibaüzenetet, ha egy függvényhívás végére érünk, és ennek a függvényhívásnak blokkjában (vagyis lexikális környezetében) volt olyan módosítás egy kimeneti streamben, ami nem lett visszaállítva az alaphelyzetbe. Kivételt képez az az eset, ha egy stream objektumtól lekérdezték a formátumait jelző állapotbiteket. Ilyenkor azt feltételezzük, hogy aki lekérte ezeket az majd vissza is fogja állítani az eredeti állapotot (más praktikus célja nem nagyon létezik a formátum-flagek lekérésének). Ez már az eredeti problémát elég jól közelítő modell.
 
 Az OStreamFormatChecker tehát megvalósítását tekintve feliratkozik az \texttt{EndFunction} eseményre, itt lehetséges felfedezni az állapot-visszaállítás hiányát, illetve feliratkozik még a \texttt{PreCall} és \texttt{EvalCall} eseményekre, mert ezek tudják megváltoztatni a stream állapotát. Egy stream állapota ráadásul több úton is változhat. Van, hogy az objektumon direkt módon meghívunk egy tagfüggvényt, de lehetőségünk van manipulátorok használatára is.
 
@@ -769,11 +776,15 @@ std::cout << std::setprecision(3) << var;
 // prints 117.123
 \end{lstlisting}
 
-A megvalósítás során felhasználjuk a Clang SA által a checker-eknek biztosított tárolási lehetőséget egy asszociatív (map) jellegű tároló formájában. Minden stream-et a memóriában elfoglalt helye alapján azonosítunk, és ehhez, mint kulcshoz rendeljük a saját magunk által számon tartott formázási állapotok struktúráját, illetve hogy eredetileg melyik függvényben történt az első változtatás. Így a szimbolikus végrehajtás során minden alkalommal amikor egy egyező memóriaterületű stream objektumon módosítást tapasztalunk, akkor feljegyezzük. Az \texttt{EndFunction} eseményre ezután már könnyű reagálni, hiszen csak meg kell nézni, milyen streamek állapotait tartjuk számon, azok közül amelyiknél a bejegyzett első módosítás környezete éppen az a függvény amiből kilépünk. Ha az állapotok közül ilyenkor egy is eltér az alapértelmezettől, akkor hibaüzenetet adunk. Itt kezeljük még a kivételes esetet is, amikor volt \texttt{.flags()} hívás az objektumon. Ilyen esetben nem adunk hibát bármilyen is legyen a számon tartott stream.
+A megvalósítás során felhasználjuk a Clang SA által a checker-eknek biztosított tárolási lehetőséget egy asszociatív (map) jellegű tároló formájában. Minden stream-et a memóriában elfoglalt helye alapján azonosítunk, és ehhez, mint kulcshoz rendeljük a saját magunk által számon tartott formázási állapotok struktúráját, illetve hogy eredetileg melyik függvényben történt az első változtatás. Így a szimbolikus végrehajtás során minden alkalommal, amikor egy egyező memóriaterületű stream objektumon módosítást tapasztalunk, akkor feljegyezzük. Az \texttt{EndFunction} eseményre ezután már könnyű reagálni. Csak meg kell nézni, milyen stream-ek állapotait tartjuk számon azok közül, amelyiknél a bejegyzett első módosítás környezete éppen az a függvény, amiből kilépünk. Ha az állapotok közül ilyenkor egy is eltér az alapértelmezettől, akkor hibaüzenetet adunk. Itt kezeljük még a kivételes esetet is, amikor volt \texttt{.flags()} hívás az objektumon. Ilyen esetben nem adunk hibát bármilyen is legyen a számon tartott stream.
 
---------- osztálydiagram az ostreamchecker fontosabb részeiről ---------
+\begin{figure}[h]
+\caption{A két checker egyszerűsített osztálydiagramja.}
+\centering
+\includegraphics[scale=0.4]{checkers.png}
+\end{figure}
 
-Az EnumCastOutOfRange checker egyszerűbb felépítésű. Itt a feladat az volt, hogy akkor adjunk hibát, hogy ha egy olyan típuskikényszerítés (cast) történik, melynek operandusa egy egész értéktípusba tartozó érték, és a paramétere, vagyis az a típus amibe kényszerítjük egy olyan enumeráció típus, amely típus definíciójából kiderül, hogy nem is képes reprezentálni az operandust.
+Az EnumCastOutOfRange checker egyszerűbb felépítésű. Itt a feladat az volt, hogy akkor adjunk hibát, hogy ha egy olyan típuskikényszerítés (cast) történik, melynek operandusa egy egész értéktípusba tartozó érték, és a paramétere, vagyis az a típus, amibe kényszerítjük egy olyan enumeráció típus, amely típus definíciójából kiderül, hogy nem is képes reprezentálni az operandust.
 
 \begin{lstlisting}[caption={Enumeráció hibás cast-olása.}
 \label{lst:activatevirtualenv}]
@@ -782,23 +793,24 @@ enum GraphNode {
 	GRAY,
 	BLACK
 };
-
 GrapNode startNode = static_cast<GraphNode>(5);
 //startNode's value is undefined
 \end{lstlisting}
 
-Ilyen esetben ha nem képes az enumerációs típus tárolni az értéket, akkor cast eredménye nem definiált. Ahhoz, hogy egy enumerációs típus használni tudjunk szükség van a definíciójára a használat pontján, így azt a stratégiát választottam, hogy iratkozzon fel a checker a \texttt{PreStmt}, vagyis pre-statement, egy utasítás végrehajtása előtti eseményre. Abban az esetben, ha ez az utasítás egy cast-ot jelent (ez lehet C-stílusú, vagy lehet C++-os static\_cast), és ráadásul a céltípus enumerációs jellegű, akkor megvizsgálom hogy lehetséges ez a művelet.
+Ilyen esetben ha nem képes az enumerációs típus tárolni az értéket, akkor cast eredménye nem definiált. Ahhoz, hogy egy enumerációs típus használni tudjunk szükség van a definíciójára a használat pontján, így azt a stratégiát választottam, hogy iratkozzon fel a checker a \texttt{PreStmt}, vagyis pre-statement, egy utasítás végrehajtása előtti eseményre. Abban az esetben, ha ez az utasítás egy cast-ot jelent (ez lehet C-stílusú, vagy lehet C++-os static\_cast), és ráadásul a céltípus enumerációs jellegű, akkor megvizsgálom, hogy ez a művelet a probléma kitűzése szerint valid lehet-e.
 
-Ehhez egyik oldalról szükség van az enumeráció definíciójára, ez rendelkezésre is áll. A definíció egyszerűen megtalálható, és ha mint AST egy szelete hozzáfértünk, akkor meg is tudjuk belőle a lehetséges értékeket. Másik oldalról szükséges számunkra az érték amit cast-olunk. Ez sokszor nehezebb, és a checker kihasználja, hogy szimbolikus értékekkel történik a végrehajtás. A szimbolikus értékek valójában a valós futás során ténylegesen létező értékeket szimbolizálják megkötések (constraint-ek) formájában. Még ha nem is ismert az operandus konkrét értéke, a Clang SA által vezetett megszorításlisták segítségével ellenőrizhetjük, hogy létezik-e olyan eset, hogy az operandus valóban megfelelő értékkel bír. Akkor adunk hibát, ha nem létezik ilyen eset, hiszen egyik célunk, hogy ne produkáljunk hamis pozitív jelzéseket, ezért konzervatív módon járunk el.
+Ehhez egyik oldalról szükség van az enumeráció definíciójára, ez rendelkezésre is áll. A definíció egyszerűen megtalálható, és ha mint AST egy szelete hozzáfértünk, akkor meg is tudjuk belőle a lehetséges értékeket. Másik oldalról szükséges számunkra az érték, amit cast-olunk. Ez sokszor nehezebb, és a checker kihasználja, hogy szimbolikus értékekkel történik a végrehajtás. A szimbolikus értékek valójában a valós futás során ténylegesen létező értékeket szimbolizálják megkötések (constraint-ek) formájában. Még ha nem is ismert az operandus konkrét értéke, a Clang SA által vezetett megszorításlisták segítségével ellenőrizhetjük, hogy létezik-e olyan eset, hogy az operandus valóban megfelelő értékkel bír. Akkor adunk hibát, ha nem létezik ilyen eset, hiszen egyik célunk, hogy ne produkáljunk hamis pozitív jelzéseket, ezért konzervatív módon járunk el.
 
 
 \chapter{Tesztek}
 
-Mindkét checker-em rendelkezik automatizált unit-tesztekkel. Az OStreamFormatChecker tesztelése során külön nehézséget jelentett, hogy az egyik legvalószínűbb tesztelési célpont a sztenderd kimenetet szimbolizáló std::cout, ez pedig megvalósítását tekintve úgy működik a legtöbb sztenderd nyelvi könyvtár (STL) megvalósításban, hogy az iostream header tartalmaz egy statikus tagot, amely tárolja a globális \texttt{std::cout} stream objektumot. Emiatt a viselkedése miatt az egész \emph{LLVM} kódbázisból ki van tiltva az iostream header használata. Ahhoz hogy tesztelni tudjam a checkert létre kellett hozni az STL-es output rendszer a vázát, amely alapján ha implementáció nélkül is, de szintaktikailag helyesen lehet hivatkozni a tesztesetek közben az \texttt{std::cout} objektumra, és a rá értelmezett műveletekre. Ez a mock-megvalósítás maga legalább annyi időt vesz igénybe mint a tesztesetek megírása, viszont sokat segíthet másoknak is aki hasonló funkcionalitás tesztelésébe fognak.
+Mindkét checker-em rendelkezik automatizált unit-tesztekkel. Az OStreamFormatChecker tesztelése során külön nehézséget jelentett, hogy az egyik legvalószínűbb tesztelési célpont a sztenderd kimenetet szimbolizáló \texttt{std::cout}, ez pedig megvalósítását tekintve úgy működik a legtöbb sztenderd nyelvi könyvtár (STL) megvalósításban, hogy az iostream header tartalmaz egy statikus tagot, amely tárolja a globális \texttt{std::cout} stream objektumot. Emiatt a viselkedése miatt az egész \emph{LLVM} kódbázisból ki van tiltva az iostream header használata. Ahhoz, hogy tesztelni tudjam a checkert létre kellett hozni az STL-es output rendszer a vázát, amely alapján ha implementáció nélkül is, de szintaktikailag helyesen lehet hivatkozni a tesztesetek közben az \texttt{std::cout} objektumra, és a rá értelmezett műveletekre. Ez a mock-megvalósítás maga legalább annyi időt vesz igénybe, mint a tesztesetek megírása, viszont sokat segíthet másoknak is akik hasonló funkcionalitás tesztelésébe fognak.
 
-Az OstreamFormatChecker tíz automatizált tesztesete lefedi a tesztelni kívánt működés nagyrészét. Van benne egyszeri módosítás, több módosítás egymásutánja, az értékek visszaállítása, illetve ennek elmulasztása, és vannak benne olyan esetek amikor a szimbolikus végrehajtónak a megszorítások alapján kell kitalálnia, hogy tényleg történt-e módosítás vagy nem. Az EnumCastOutOfRange tizenhat tesztesettel rendelkezik C-stílusú és C++ cast-olásokra, illetve megadott háttértípussal rendelkező és hagyományos, C-beli globálisan értelmezett és C++11-es láthatósági körrel rendelkező enumerációkra egyaránt.
+Az OstreamFormatChecker tíz automatizált tesztesete lefedi a tesztelni kívánt működés nagyrészét. Van benne egyszeri módosítás, több módosítás egymásutánja, az értékek visszaállítása, illetve ennek elmulasztása, és vannak benne olyan esetek, amikor a szimbolikus végrehajtónak a megszorítások alapján kell kitalálnia, hogy tényleg történt-e módosítás vagy nem. Az EnumCastOutOfRange tizenhat tesztesettel rendelkezik C-stílusú és C++ cast-olásokra, illetve megadott háttértípussal rendelkező és hagyományos, C-beli globálisan értelmezett és C++11-es láthatósági körrel rendelkező enumerációkra egyaránt.
 
-A manuális futás során nagyobb kódbázisokon is futtatásra került az ellenőrző, és a futás minden esetben problémamentes volt. A keretrendszer tesztelésre került több open-source könyvtáron, és a program saját kódján is. Az Ericssonnál végzett munkám során lehetőségem nyílt sok nagy méretű, nyílt forráskódú projekten látni a Clang Static Analyzer eredményeit, többek között az OpenSSL, ffmpeg, tmux és vim könyvtárakon, és ezek mind működnek a CheckRunner szoftveren keresztüli használat során is. A saját checker-eim futása során lefuttatott tesztek közül két példát mutatok be a Boost könyvtárban amikor az OStreamFormatChecker hibát jelzett.
+A manuális futás során nagyobb kódbázisokon is lefuttattam az ellenőrzőt, és a futás minden esetben problémamentes volt. A keretrendszer tesztelésre került több open-source könyvtáron, és a program saját kódján is. Az Ericssonnál végzett munkám során lehetőségem nyílt sok nagy méretű, nyílt forráskódú projekten látni a Clang Static Analyzer eredményeit, többek között az OpenSSL, ffmpeg, tmux, memcached, nginx és vim könyvtárakon, és ezek mind működnek a CheckRunner szoftveren keresztüli használat során is.
+
+A saját checker-eim manuális teszteredményei közül két példát mutatok be a Boost \cite{boosthomepage} könyvtárban, amikor az OStreamFormatChecker hibát jelzett. Mindkettő a \texttt{Boost 1.63.0}-ás verziójában fordult elő. A Boost projekt moduljai között több olyan van, ami nem köthető build-rendszerhez. Az ilyen könyvtárak esetében nem egy különálló fájlban van az implementáció, hanem csak header-állományokból állnak. Ebben fájlban együtt él a deklaráció és a definíció, és jellemzően hpp kiterjesztéssel rendelkezik. A Clang SA parancssori futattását alkalmaztam az egyes hpp állományokra.
 
 \begin{lstlisting}[basicstyle=\tiny,caption={Boost print hiba.}
 \label{lst:boostprintmacroerror}]
@@ -876,7 +888,7 @@ class progress_timer : public timer, private noncopyable
 Ennek a hibának az az érdekessége, hogy a kód írója külön figyelmet fordított a formázási flag-ek visszaállítására, de ha kivétel lép fel, akkor mégsem garantált az alapértelmezett állapot visszaállítása.
 
 \chapter{Összefoglalás}
-Szakdolgozatomban ismertettem a modern szoftverfejlesztés eszköztárának fontosabb elemeit. Összehasonlításra került a statikus és a dinamikus kódelemzési stratégia, külön hangsúlyt fektetve a statikus elemzés jellegzetességeire. Emellett több példán keresztül bemutatásra került az eszköztár, illetve a modellezési módszerek, amelyek ezt lehetővé teszik. Kiterjesztést nyert a \emph{Clang} keretrendszer is, több hibát képes felismerni a két checkernek köszönhetően mint azelőtt. Bemutattam az \emph{LLVM} és a \emph{Clang} eszköz felhasználási lehetőségeit egy praktikus program keretében, mely statikus elemzéshez kapcsolódó eszközöket fogott össze egy grafikus felületbe.
+Szakdolgozatomban ismertettem a modern szoftverfejlesztés eszköztárának fontosabb elemeit. Összehasonlításra került a statikus és a dinamikus kódelemzési stratégia, külön hangsúlyt fektetve a statikus elemzés jellegzetességeire. Emellett több példán keresztül bemutatásra került az eszköztár, illetve a modellezési módszerek, amelyek ezt lehetővé teszik. Kiterjesztést nyert a \emph{Clang} keretrendszer is, több hibát képes felismerni a két checker-nek köszönhetően, mint azelőtt. Bemutattam az \emph{LLVM} és a \emph{Clang} eszköz felhasználási lehetőségeit egy praktikus program keretében, mely statikus elemzéshez kapcsolódó eszközöket fogott össze egy grafikus felületbe.
 
 A program számos továbbfejlesztési lehetőséggel rendelkezik. A \emph{CodeChecker} rendszerrel való hatékonyabb integráció lehetséges anélkül, hogy feláldozzuk a moduláris felépítést. A \emph{CodeChecker} szoftvernek modern elvárásokkal összhangban zajló virtualizálása jelenleg fejlesztés alatt áll, egy \emph{Docker} konténer segítségével lehetőség lesz akár felhőalapú futtatására is. A CheckRunner szoftver illeszthető lehet az ilyen jellegű használathoz.
 
@@ -886,51 +898,55 @@ A statikus forráselemzés a modern szoftverfejlesztés szerves részévé vált
 
 \bibitem{umlverification} Makan Pourzandi {\em Formal Verification and Validation of UML
 2.0 Sequence Diagrams using Source and
-Destination of Messages}.  2009 https://doi.org/10.1016/j.entcs.2009.09.064 2017.04.28.
+Destination of Messages}.  2009 \url{https://doi.org/10.1016/j.entcs.2009.09.064} 2017.04.28.
 
 \bibitem{interpretedtransforms} Bücker H.M., Petera M., Vehreschild A. (2008) {\em Code Optimization Techniques in Source Transformations for Interpreted Languages.} In: Bischof C.H., Bücker H.M., Hovland P., Naumann U., Utke J. (eds) Advances in Automatic Differentiation. Lecture Notes in Computational Science and Engineering, vol 64. Springer, Berlin, Heidelberg
 
-\bibitem{transpilation} Javascript nyelvi transzformációk. https://thenewstack.io/javascript-transpilers-need-know/ 2017.04.28
+\bibitem{transpilation} Javascript nyelvi transzformációk. \url{https://thenewstack.io/javascript-transpilers-need-know/} 2017.04.28
 
-\bibitem{chaosmonkey} Chaos Monkey. https://insights.sei.cmu.edu/devops/2015/04/devops-case-study-netflix-and-the-chaos-monkey.html 2017.04.28
+\bibitem{chaosmonkey} Chaos Monkey. \url{https://insights.sei.cmu.edu/devops/2015/04/devops-case-study-netflix-and-the-chaos-monkey.html} 2017.04.28
 
-\bibitem{llvmhomepage} LLVM honlap. http://llvm.org/ 2017.04.29
+\bibitem{llvmhomepage} LLVM honlap. \url{http://llvm.org} 2017.04.29
 
-\bibitem{llvmarchitecture} LLVM könyv http://www.aosabook.org/en/llvm.html 2017.04.29
+\bibitem{llvmarchitecture} LLVM könyv \url{http://www.aosabook.org/en/llvm.html} 2017.04.29
 
-\bibitem{simplecompilerimage} Egyszerűsített fordítómodell. http://www.aosabook.org/images/llvm/SimpleCompiler.png 2017.04.29
+\bibitem{simplecompilerimage} Egyszerűsített fordítómodell. \url{http://www.aosabook.org/images/llvm/SimpleCompiler.png} 2017.04.29
 
-\bibitem{lattnerhomepage} Chris Lattner weboldala. http://nondot.org/~sabre/ 2017.04.29
+\bibitem{lattnerhomepage} Chris Lattner weboldala. \url{http://nondot.org/~sabre/} 2017.04.29
 
-\bibitem{clangusermanual} Clang hivatalos felhasználói dokumentáció. https://clang.llvm.org/docs/UsersManual.html 2017.05.03
+\bibitem{clangusermanual} Clang hivatalos felhasználói dokumentáció. \url{https://clang.llvm.org/docs/UsersManual.html} 2017.05.03
 
-\bibitem{clangdriverinternals} Clang driver leírás. https://clang.llvm.org/docs/DriverInternals.html 2017.05.03
+\bibitem{clangdriverinternals} Clang driver leírás. \url{https://clang.llvm.org/docs/DriverInternals.html} 2017.05.03
 
-\bibitem{clangtoolchain} Clang fordítóeszközök. https://clang.llvm.org/docs/Toolchain.html 2017.05.03
+\bibitem{clangtoolchain} Clang fordítóeszközök. \url{https://clang.llvm.org/docs/Toolchain.html} 2017.05.03
 
-\bibitem{clangdriverimage} Clang driver szerkezet. https://clang.llvm.org/docs/\_images/DriverArchitecture.png 2017.05.03
+\bibitem{clangdriverimage} Clang driver szerkezet. \url{https://clang.llvm.org/docs/_images/DriverArchitecture.png} 2017.05.03
 
-\bibitem{clangsahomepage} Clang SA weboldal. http://clang-analyzer.llvm.org/ 2017.05.04
+\bibitem{clangsahomepage} Clang SA weboldal. \url{http://clang-analyzer.llvm.org} 2017.05.04
 
-\bibitem{clangsapathsensitiveimage} Clang SA XCode integráció. http://clang-analyzer.llvm.org/images/analyzer\_xcode.png 2017.05.04
+\bibitem{clangsapathsensitiveimage} Clang SA XCode integráció. \url{http://clang-analyzer.llvm.org/images/analyzer_xcode.png} 2017.05.04
 
-\bibitem{clangsaimage} Clang SA HTML nézet. http://clang-analyzer.llvm.org/images/analyzer\_html.png 2017.05.04
+\bibitem{clangsaimage} Clang SA HTML nézet. \url{http://clang-analyzer.llvm.org/images/analyzer_html.png} 2017.05.04
 
-\bibitem{libclangdocs} LibClang dokumentáció. https://clang.llvm.org/doxygen/group\_\_CINDEX.html 2017.05.05
+\bibitem{libclangdocs} LibClang dokumentáció. \url{https://clang.llvm.org/doxygen/group__CINDEX.html} 2017.05.05
 
-\bibitem{clangtooling} Clang könyvtárak dokumentáció. https://clang.llvm.org/docs/Tooling.html 2017.05.05
+\bibitem{clangtooling} Clang könyvtárak dokumentáció. \url{https://clang.llvm.org/docs/Tooling.html} 2017.05.05
 
-\bibitem{codecheckergit} CodeChecker kódbázis. https://github.com/Ericsson/codechecker 2017.05.05
+\bibitem{codecheckergit} CodeChecker kódbázis. \url{https://github.com/Ericsson/codechecker} 2017.05.05
 
-\bibitem{getllvmpage} LLVM felhasználói dokumentáció. http://llvm.org/docs/GettingStarted.html 2017.05.05
+\bibitem{getllvmpage} LLVM felhasználói dokumentáció. \url{http://llvm.org/docs/GettingStarted.html} 2017.05.05
 
-\bibitem{checkerdevmanual} Clang SA checker dokumentáció. http://clang-analyzer.llvm.org/checker\_dev\_manual.html 2017.05.05
+\bibitem{checkerdevmanual} Clang SA checker dokumentáció. \url{http://clang-analyzer.llvm.org/checker_dev_manual.html} 2017.05.05
 
-\bibitem{securecodingint50} INT50-CPP specifikáció. https://www.securecoding.cert.org/confluence/display/cplusplus/INT50-CPP.+Do+not+cast+to+an+out-of-range+enumeration+value 2017.05.06
+\bibitem{securecodingint50} INT50-CPP specifikáció. \url{https://www.securecoding.cert.org/confluence/display/cplusplus/INT50-CPP.+Do+not+cast+to+an+out-of-range+enumeration+value} 2017.05.06
 
-\bibitem{codecheckerslide} CodeChecker szerkezet. https://www.slideshare.net/GyorgyOrban/static-analysis-of-c-programs 2017.06.08
+\bibitem{codecheckerslide} CodeChecker szerkezet. \url{https://www.slideshare.net/GyorgyOrban/static-analysis-of-c-programs} 2017.05.08
 
-\bibitem{dockerhomepage} Docker weboldal. https://www.docker.com/
+\bibitem{qthomepage} Qt grafikus keretrendszer honlapja. \url{https://www.qt.io} 2017.05.12
+
+\bibitem{boosthomepage} Boost C++ könyvtár honlapja. \url{http://www.boost.org} 2017.05.13
+
+\bibitem{dockerhomepage} Docker weboldal. \url{https://www.docker.com} 2017.05.12
 
 \end{thebibliography}
 \end{document}
